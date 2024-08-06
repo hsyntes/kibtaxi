@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/widgets/appbar.dart';
+import "package:flutter_svg/flutter_svg.dart";
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,7 +11,11 @@ class HomeScreen extends StatelessWidget {
         child: Column(
       children: [
         MyAppBar(
-          title: const Text("CypruxTaxi"),
+          title: SvgPicture.asset(
+            'assets/brand.svg',
+            fit: BoxFit.fitHeight,
+            height: 36,
+          ),
           actions: [
             IconButton(
               onPressed: () {

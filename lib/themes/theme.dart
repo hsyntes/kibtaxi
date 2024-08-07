@@ -6,8 +6,8 @@ class MyThemeData {
           primary: Color(0xFFEE7E21),
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-        ),
+            // showSelectedLabels: false,
+            // showUnselectedLabels: false,
+            ),
       );
 }

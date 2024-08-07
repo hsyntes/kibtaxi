@@ -12,6 +12,8 @@ class _MyAppState extends State<MyApp> {
     MapScreen(),
   ];
 
+  // Future<void> _requestLocationPermission() async {}
+
   void onTap(index) {
     setState(() {
       _currentIndex = index;

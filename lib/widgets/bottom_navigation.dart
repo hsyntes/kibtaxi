@@ -16,8 +16,8 @@ class MyBottomNavigationBar extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
             icon: currentIndex == 0
-                ? Icon(Icons.home)
-                : Icon(Icons.home_outlined),
+                ? const Icon(Icons.home)
+                : const Icon(Icons.home_outlined),
             label: "Home"),
         BottomNavigationBarItem(
           icon: currentIndex == 1

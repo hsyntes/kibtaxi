@@ -35,6 +35,10 @@ dependencies:
   permission_handler: ^11.3.1
   http: ^1.2.2
   geocoding: ^3.0.0
+  skeletonizer: ^1.4.2
+  carousel_slider: ^4.2.1
+  flutter_rating_bar: ^4.0.1
+  flutter_font_icons: ^2.2.7
 
 
   # The following adds the Cupertino Icons font to your application.

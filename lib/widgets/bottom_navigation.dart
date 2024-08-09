@@ -21,10 +21,16 @@ class MyBottomNavigationBar extends StatelessWidget {
             label: "Home"),
         BottomNavigationBarItem(
           icon: currentIndex == 1
-              ? const Icon(Icons.location_on)
+              ? Icon(Icons.location_on)
               : const Icon(Icons.location_on_outlined),
           label: "Taxi Map",
         ),
+        BottomNavigationBarItem(
+          icon: currentIndex == 2
+              ? const Icon(Icons.bookmark)
+              : const Icon(Icons.bookmark_outline),
+          label: "Saved Taxis",
+        )
       ],
       currentIndex: currentIndex,
       onTap: onTap,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/screens/bookmark.dart';
 import 'package:mobile/screens/home.dart';
 import 'package:mobile/screens/map.dart';
 import 'package:mobile/themes/theme.dart';
@@ -10,6 +11,7 @@ class _MyAppState extends State<MyApp> {
   final List<Widget> _screens = const [
     HomeScreen(),
     MapScreen(),
+    BookmarkScreen(),
   ];
 
   // Future<void> _requestLocationPermission() async {}

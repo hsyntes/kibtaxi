@@ -1,12 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:mobile/widgets/appbar.dart';
-import 'package:permission_handler/permission_handler.dart';
 import "package:http/http.dart" as http;
 import "package:geocoding/geocoding.dart";
 import 'package:skeletonizer/skeletonizer.dart';
@@ -14,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  Position? _position;
+  // Position? _position;
   final List<dynamic> _taxis = [];
   Future<dynamic>? _popularTaxis;
   bool _isTaxisLoading = false;
@@ -23,84 +22,16 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _limit = 4;
   String? _city;
 
-  Future<void> _apiHealth() async {
-    try {
-      final response = await http.get(
-        Uri.parse("http://192.168.88.186:8000/api"),
-      );
-
-      print("Status: ${response.statusCode}");
-
-      if (response.statusCode == 200) {
-        print("Connection to the server is successful.");
-      }
-    } catch (e) {
-      throw Exception("Connection to the server is failed.");
-    }
-  }
-
-  Future<void> _requestLocationPermission() async {
-    final status = await Permission.locationWhenInUse.status;
-    if (!status.isGranted) {
-      await Permission.locationWhenInUse.request();
-    }
-  }
-
-  Future<void> _getPosition() async {
-    if (_isTaxisLoading || !_hasMore) return;
-
-    setState(() {
-      _isTaxisLoading = true;
-    });
-
-    if (!await Geolocator.isLocationServiceEnabled()) {
-      await Geolocator.openLocationSettings();
-
-      setState(() {
-        _isTaxisLoading = false;
-      });
-
-      return;
-    }
-
-    LocationPermission locationPermission = await Geolocator.checkPermission();
-
-    if (locationPermission == LocationPermission.denied) {
-      locationPermission = await Geolocator.requestPermission();
-
-      setState(() {
-        _isTaxisLoading = false;
-      });
-
-      return;
-    }
-
-    if (locationPermission == LocationPermission.deniedForever) {
-      setState(() {
-        _isTaxisLoading = false;
-      });
-
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    );
-
-    setState(() {
-      _position = position;
-    });
-  }
-
   Future<void> _getCity() async {
     try {
-      final latitude = _position?.latitude;
-      final longitude = _position?.longitude;
+      // final latitude = _position?.latitude;
+      // final longitude = _position?.longitude;
+
+      // final latitude = widget.position.latitude;
+      // final longitude = widget.position.longitude;
 
       List<Placemark> placemark =
-          await placemarkFromCoordinates(latitude!, longitude!);
+          await placemarkFromCoordinates(35.095335, 33.930475);
 
       String? city;
 
@@ -127,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.88.186:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://192.168.119.108:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       print("Status: ${response.statusCode}");
 
@@ -145,12 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      final latitude = _position?.latitude;
-      final longitude = _position?.longitude;
+      // final latitude = widget.position.latitude;
+      // final longitude = widget.position.longitude;
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.88.186:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.119.108:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 
@@ -181,9 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initialize() async {
-    await _apiHealth();
-    await _requestLocationPermission();
-    await _getPosition();
     await _getCity();
 
     setState(() {
@@ -205,15 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _initialize();
 
     _scrollController.addListener(() {
-      print("Scroll Position: ${_scrollController.position.pixels}");
-      print(
-          "Max Scroll Position: ${_scrollController.position.maxScrollExtent}");
-
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
           !_isTaxisLoading &&
           _hasMore) {
-        print("Fetching more taxis...");
         _getTaxis();
       }
     });
@@ -262,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         SizedBox(width: 6),
                         Text(
-                          "Finding your location",
+                          "Getting most popular taxis",
                           style: TextStyle(color: Colors.black54),
                         ),
                       ],
@@ -288,10 +211,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (snapshot.hasData) {
             final data = snapshot.data as Map<String, dynamic>;
-            final List<dynamic> taxis = data['data']['taxis'] ?? [];
+            final List<dynamic> taxis = data['data']['taxis'];
 
             return CustomScrollView(
               controller: _scrollController,
+              // physics: ClampingScrollPhysics(),
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
@@ -673,11 +597,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.blueAccent,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(18),
-                                      ),
-                                    ),
                                     elevation: 0,
                                   ),
                                   child: Row(
@@ -710,11 +629,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(18),
-                                      ),
-                                    ),
                                     elevation: 0,
                                   ),
                                   child: Row(
@@ -753,7 +667,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final position;
+  const HomeScreen({this.position, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

@@ -11,6 +11,8 @@ class MyThemeData {
           shadowColor: Colors.black54,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Color(0xFFFFA500),
+          unselectedItemColor: Colors.black54,
           showSelectedLabels: false,
           showUnselectedLabels: false,
         ),

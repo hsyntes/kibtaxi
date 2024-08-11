@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mobile/screens/profile.dart';
 import 'package:mobile/widgets/appbar.dart';
 import "package:http/http.dart" as http;
 import "package:geocoding/geocoding.dart";
@@ -13,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  // Position? _position;
   final List<dynamic> _taxis = [];
   Future<dynamic>? _popularTaxis;
   bool _isTaxisLoading = false;
@@ -24,14 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _getCity() async {
     try {
-      // final latitude = _position?.latitude;
-      // final longitude = _position?.longitude;
-
-      // final latitude = widget.position.latitude;
-      // final longitude = widget.position.longitude;
-
-      List<Placemark> placemark =
-          await placemarkFromCoordinates(35.095335, 33.930475);
+      List<Placemark> placemark = await placemarkFromCoordinates(
+          widget.position.latitude, widget.position.longitude);
 
       String? city;
 
@@ -58,9 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.119.108:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
-
-      print("Status: ${response.statusCode}");
+          "http://192.168.88.141:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -81,11 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.119.108:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.88.141:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
-
-      print("Status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -103,7 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
         throw Exception("Failed fetching data.");
       }
     } catch (e) {
-      print("Error: $e");
     } finally {
       setState(() {
         _isTaxisLoading = false;
@@ -147,7 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: MyAppBar(
         title: Image.asset(
-          'assets/icons/brand.png',
+          Theme.of(context).brightness == Brightness.dark
+              ? 'assets/icons/brand.light.png'
+              : "assets/icons/brand.dark.png",
           // height: kToolbarHeight * .6,
           height: 30,
         ),
@@ -162,46 +152,67 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               print("Ellipsis");
             },
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.menu),
           ),
         ],
       ),
       body: FutureBuilder<dynamic>(
         future: _popularTaxis,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              !snapshot.hasData) {
-            return Skeletonizer.zone(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
+          print("position: ${widget.position}");
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
                       children: [
-                        SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(strokeWidth: 1),
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          "Getting most popular taxis",
-                          style: TextStyle(color: Colors.black54),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 1),
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              "Getting most popular taxis",
+                              style: TextStyle(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white54
+                                    : Colors.black54,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    Card(
-                      elevation: 0,
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Bone.circle(size: 48),
-                        title: Bone.text(words: 2),
-                        subtitle: Bone.text(words: 1),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: 10,
+                    (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 16, left: 16),
+                        child: Skeletonizer.zone(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: Bone.circle(size: 48),
+                            title: Bone.text(words: 2),
+                            subtitle: Bone.text(words: 1),
+                            trailing: Bone.icon(),
+                            isThreeLine: true,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
             );
           }
 
@@ -227,9 +238,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icon(
                               Icons.rocket_launch,
                               size: 18,
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
-                            SizedBox(width: 4),
+                            SizedBox(width: 6),
                             Text(
                               "Most popular in $_city",
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -251,7 +262,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             final taxi = taxis[index];
 
                             return Card(
-                              elevation: 1,
                               child: Stack(
                                 children: [
                                   ListTile(
@@ -275,9 +285,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    trailing: Icon(
-                                      Icons.bookmark_outline,
-                                      color: Colors.black54,
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.bookmark_outline),
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white54
+                                          : Colors.black54,
+                                      onPressed: () {
+                                        print("Added to bookmarks!");
+                                      },
                                     ),
                                     subtitle: Column(
                                       crossAxisAlignment:
@@ -286,7 +302,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Text(
                                           "@${taxi['taxi_username']}",
                                           style: TextStyle(
-                                            color: Colors.black54,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white54
+                                                    : Colors.black54,
                                             fontSize: 12,
                                           ),
                                         ),
@@ -300,7 +320,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Icon(
                                               Icons.location_on,
                                               size: 16,
-                                              color: Colors.black54,
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white54
+                                                  : Colors.black54,
                                             ),
                                             SizedBox(
                                               width: 2,
@@ -308,7 +332,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Text(
                                               "${taxi['taxi_city']}",
                                               style: TextStyle(
-                                                color: Colors.black54,
+                                                color: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white54
+                                                    : Colors.black54,
                                                 fontSize: 12,
                                               ),
                                             )
@@ -328,7 +356,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               "${taxi['taxi_popularity']}",
                                               style: TextStyle(
                                                 color: Theme.of(context)
-                                                    .primaryColor,
+                                                    .colorScheme
+                                                    .primary,
                                               ),
                                             ),
                                             SizedBox(width: 3),
@@ -343,9 +372,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                               itemBuilder: (context, _) => Icon(
                                                 Icons.star,
                                                 color: Theme.of(context)
-                                                    .primaryColor,
+                                                    .colorScheme
+                                                    .primary,
                                               ),
-                                              unratedColor: Colors.black26,
+                                              unratedColor: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white24
+                                                  : Colors.black26,
                                               onRatingUpdate: (rating) {},
                                             ),
                                           ],
@@ -353,6 +387,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                     isThreeLine: true,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProfileScreen(
+                                            id: taxi['_id'],
+                                            appBarTitle: taxi['taxi_name'],
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                   Positioned(
                                     bottom: 0,
@@ -464,9 +509,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icon(
                               Icons.my_location,
                               size: 18,
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
-                            SizedBox(width: 4),
+                            SizedBox(width: 6),
                             Text(
                               "Others around you",
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -495,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       final taxi = _taxis[index];
-                      print("taxi: $taxi");
+
                       return ListTile(
                         leading: taxi['taxi_profile'] != null
                             ? ClipOval(
@@ -513,9 +558,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        trailing: Icon(
-                          Icons.bookmark_outline,
-                          color: Colors.black54,
+                        trailing: IconButton(
+                          icon: Icon(Icons.bookmark_outline),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white54
+                              : Colors.black54,
+                          onPressed: () {
+                            print("Added to the bookmarks!");
+                          },
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -523,7 +573,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               "@${taxi['taxi_username']}",
                               style: TextStyle(
-                                color: Colors.black54,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white54
+                                    : Colors.black54,
                                 fontSize: 12,
                               ),
                             ),
@@ -535,7 +588,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Icon(
                                   Icons.location_on,
                                   size: 16,
-                                  color: Colors.black54,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white54
+                                      : Colors.black54,
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -543,7 +599,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   "${taxi['taxi_city']}",
                                   style: TextStyle(
-                                    color: Colors.black54,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white54
+                                        : Colors.black54,
                                     fontSize: 12,
                                   ),
                                 )
@@ -562,7 +621,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   "${taxi['taxi_popularity']}",
                                   style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                                 SizedBox(width: 3),
@@ -575,9 +635,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   initialRating: taxi['taxi_popularity'],
                                   itemBuilder: (context, _) => Icon(
                                     Icons.star,
-                                    color: Theme.of(context).primaryColor,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
-                                  unratedColor: Colors.black26,
+                                  unratedColor: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white24
+                                      : Colors.black26,
                                   onRatingUpdate: (rating) {},
                                 ),
                               ],
@@ -650,6 +714,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           ],
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                id: taxi['_id'],
+                                appBarTitle: taxi['taxi_name'],
+                              ),
+                            ),
+                          );
+                        },
                         isThreeLine: true,
                       );
                     },

@@ -72,7 +72,8 @@ flutter_launcher_icons:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/icons/brand.png
+    - assets/icons/brand.light.png
+    - assets/icons/brand.dark.png
     - assets/icons/app_icon.png
 
   # The following line ensures that the Material Icons font is

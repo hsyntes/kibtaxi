@@ -7,12 +7,12 @@ import "package:provider/provider.dart";
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Theme.of(context),
+  //     statusBarIconBrightness: Brightness.dark,
+  //   ),
+  // );
 
   runApp(
     ChangeNotifierProvider(

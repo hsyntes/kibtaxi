@@ -1,13 +1,11 @@
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:mobile/app.dart";
-import "package:mobile/models/position.dart";
+import "package:mobile/models/bookmark.dart";
 import "package:mobile/models/theme.dart";
 import "package:provider/provider.dart";
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
+  // WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(
   //     statusBarColor: Theme.of(context),
@@ -16,8 +14,11 @@ void main() {
   // );
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => BookmarkProvider())
+      ],
       child: MyApp(),
     ),
   );

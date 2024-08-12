@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mobile/models/bookmark.dart';
 import 'package:mobile/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<dynamic> _getTaxi() async {
     try {
       final response = await http.get(
-          Uri.parse("http://192.168.88.194:8000/api/taxis/id/${widget.id}"));
+          Uri.parse("http://192.168.88.182:8000/api/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -33,6 +34,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bookmarkProvider = Provider.of<BookmarkProvider>(context);
+
     return Scaffold(
       appBar: MyAppBar(
         title: Text(
@@ -230,9 +233,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         trailing: IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (bookmarkProvider.isBookmarked(taxi))
+                              await bookmarkProvider.removeBookmark(taxi);
+                            else
+                              await bookmarkProvider.setBookmark(taxi);
+                          },
                           icon: Icon(
-                            Icons.bookmark_outline,
+                            bookmarkProvider.isBookmarked(taxi)
+                                ? Icons.bookmark
+                                : Icons.bookmark_outline,
                             color:
                                 Theme.of(context).brightness == Brightness.dark
                                     ? Colors.white54

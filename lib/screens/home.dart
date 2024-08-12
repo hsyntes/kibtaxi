@@ -4,11 +4,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mobile/models/bookmark.dart';
 import 'package:mobile/screens/profile.dart';
 import 'package:mobile/screens/settings/settings.dart';
 import 'package:mobile/widgets/appbar.dart';
 import "package:http/http.dart" as http;
 import "package:geocoding/geocoding.dart";
+import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -74,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.88.194:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://192.168.88.182:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -95,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.88.194:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.88.182:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 
@@ -155,6 +157,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bookmarkProvider = Provider.of<BookmarkProvider>(context);
+
     return Scaffold(
       appBar: MyAppBar(
         title: Image.asset(
@@ -184,8 +188,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: FutureBuilder<dynamic>(
         future: _popularTaxis,
         builder: (context, snapshot) {
-          print("position: ${widget.position}");
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CustomScrollView(
               slivers: [
@@ -267,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              "Most popular in $_city",
+                              "Most populars in $_city",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -311,13 +313,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     trailing: IconButton(
-                                      icon: Icon(Icons.bookmark_outline),
+                                      icon: Icon(
+                                          bookmarkProvider.isBookmarked(taxi)
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_outline),
                                       color: Theme.of(context).brightness ==
                                               Brightness.dark
                                           ? Colors.white54
                                           : Colors.black54,
-                                      onPressed: () {
-                                        print("Added to bookmarks!");
+                                      onPressed: () async {
+                                        if (bookmarkProvider.isBookmarked(taxi))
+                                          await bookmarkProvider
+                                              .removeBookmark(taxi);
+                                        else
+                                          await bookmarkProvider
+                                              .setBookmark(taxi);
                                       },
                                     ),
                                     subtitle: Column(
@@ -584,12 +594,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         trailing: IconButton(
-                          icon: Icon(Icons.bookmark_outline),
+                          icon: Icon(bookmarkProvider.isBookmarked(taxi)
+                              ? Icons.bookmark
+                              : Icons.bookmark_outline),
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Colors.white54
                               : Colors.black54,
-                          onPressed: () {
-                            print("Added to the bookmarks!");
+                          onPressed: () async {
+                            if (bookmarkProvider.isBookmarked(taxi))
+                              await bookmarkProvider.removeBookmark(taxi);
+                            else
+                              await bookmarkProvider.setBookmark(taxi);
                           },
                         ),
                         subtitle: Column(

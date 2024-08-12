@@ -19,18 +19,18 @@ class MyBottomNavigationBar extends StatelessWidget {
                 ? const Icon(Icons.home)
                 : const Icon(Icons.home_outlined),
             label: "Home"),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.search),
+        //   label: "Search",
+        // ),
+        // BottomNavigationBarItem(
+        //   icon: currentIndex == 2
+        //       ? Icon(Icons.location_on)
+        //       : const Icon(Icons.location_on_outlined),
+        //   label: "Taxi Map",
+        // ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: "Search",
-        ),
-        BottomNavigationBarItem(
-          icon: currentIndex == 2
-              ? Icon(Icons.location_on)
-              : const Icon(Icons.location_on_outlined),
-          label: "Taxi Map",
-        ),
-        BottomNavigationBarItem(
-          icon: currentIndex == 3
+          icon: currentIndex == 1
               ? const Icon(Icons.bookmark)
               : const Icon(Icons.bookmark_outline),
           label: "Saved Taxis",

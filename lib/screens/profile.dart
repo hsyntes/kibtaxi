@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -14,7 +15,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<dynamic> _getTaxi() async {
     try {
       final response = await http.get(
-          Uri.parse("http://192.168.88.141:8000/api/taxis/id/${widget.id}"));
+          Uri.parse("http://192.168.88.24:8000/api/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -54,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (snapshot.hasData) {
             final taxi = snapshot.data['data']['taxi'];
 
-            print("taxi: $taxi");
+            print("taxi_photos: ${taxi['taxi_photos']}");
 
             return CustomScrollView(
               slivers: [
@@ -241,19 +242,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 SliverToBoxAdapter(child: SizedBox(height: 16)),
-                SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: 10,
-                    (context, index) {
-                      return Card(
-                        color: Colors.white,
-                      );
-                    },
-                  ),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+                SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      // crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      childCount: taxi['taxi_photos']?.length ?? 0,
+                      (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                      sigmaX: 6,
+                                      sigmaY: 6,
+                                    ),
+                                    child: Hero(
+                                      transitionOnUserGestures: true,
+                                      tag: 'imageHero$index',
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Image.network(
+                                          taxi['taxi_photos'][index],
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              taxi['taxi_photos'][index],
+                              loadingBuilder: (context, child, progress) {
+                                if (progress == null) {
+                                  return child;
+                                } else {
+                                  return Skeletonizer.zone(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Bone.square(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 )
               ],

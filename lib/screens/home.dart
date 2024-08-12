@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.88.141:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://192.168.88.24:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.88.141:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.88.24:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 

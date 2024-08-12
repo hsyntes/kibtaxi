@@ -5,11 +5,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mobile/screens/profile.dart';
+import 'package:mobile/screens/settings/settings.dart';
 import 'package:mobile/widgets/appbar.dart';
 import "package:http/http.dart" as http;
 import "package:geocoding/geocoding.dart";
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+Route _createSettingsRoute(onThemeChanged) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => SettingsScreen(
+      onThemeChanged: onThemeChanged,
+    ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.easeOut;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      var offsetAnimation = animation.drive(tween);
+
+      // Apply the animation using SlideTransition
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
+}
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
@@ -51,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.88.24:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://192.168.88.194:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -72,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.88.24:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.88.194:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 
@@ -150,7 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           IconButton(
             onPressed: () {
-              print("Ellipsis");
+              Navigator.of(context).push(
+                _createSettingsRoute(widget.onThemeChanged),
+              );
             },
             icon: const Icon(Icons.menu),
           ),
@@ -743,7 +768,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class HomeScreen extends StatefulWidget {
   final position;
-  const HomeScreen({this.position, super.key});
+  final ValueChanged<ThemeMode> onThemeChanged;
+
+  const HomeScreen({this.position, required this.onThemeChanged, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

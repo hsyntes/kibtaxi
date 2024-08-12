@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:mobile/app.dart";
 import "package:mobile/models/position.dart";
+import "package:mobile/models/theme.dart";
 import "package:provider/provider.dart";
 
 void main() {
@@ -16,7 +17,7 @@ void main() {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => PositionProvider(),
+      create: (_) => ThemeProvider(),
       child: MyApp(),
     ),
   );

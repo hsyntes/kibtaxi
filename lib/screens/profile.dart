@@ -15,7 +15,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<dynamic> _getTaxi() async {
     try {
       final response = await http.get(
-          Uri.parse("http://192.168.88.24:8000/api/taxis/id/${widget.id}"));
+          Uri.parse("http://192.168.88.194:8000/api/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -35,7 +35,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        title: Text(widget.appBarTitle),
+        title: Text(
+          widget.appBarTitle,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: FutureBuilder<dynamic>(
         future: _taxi,
@@ -296,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     child: Padding(
                                       padding: EdgeInsets.all(8),
                                       child: Bone.square(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
                                   );

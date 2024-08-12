@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:mobile/models/theme.dart';
 import 'package:mobile/screens/bookmark.dart';
 import 'package:mobile/screens/home.dart';
 import 'package:mobile/screens/map.dart';
@@ -11,9 +12,12 @@ import 'package:mobile/themes/dark.dart';
 import 'package:mobile/themes/light.dart';
 import "package:http/http.dart" as http;
 import 'package:mobile/widgets/bottom_navigation.dart';
+import 'package:provider/provider.dart';
 
 class _MyAppState extends State<MyApp>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+  ThemeMode _themeMode = ThemeMode.system;
+
   late Future<dynamic> _position;
   int _currentIndex = 0;
 
@@ -23,7 +27,7 @@ class _MyAppState extends State<MyApp>
   Future<void> _checkApiHealth() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.88.24:8000/api"),
+        Uri.parse("http://192.168.88.194:8000/api"),
       );
 
       print("Connection to the server status: ${response.statusCode}");
@@ -81,6 +85,12 @@ class _MyAppState extends State<MyApp>
     });
   }
 
+  void _toggleTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode = themeMode;
+    });
+  }
+
   void _handleLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -134,10 +144,14 @@ class _MyAppState extends State<MyApp>
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
         title: "Cyprux Taxi",
         theme: LightThemeData.theme,
         darkTheme: DarkThemeData.theme,
+        // themeMode: _themeMode,
+        themeMode: themeProvider.themeMode,
         home: Scaffold(
           body: FutureBuilder<dynamic>(
             future: _position,
@@ -390,7 +404,10 @@ class _MyAppState extends State<MyApp>
 
               if (snapshot.hasData) {
                 final List<Widget> _screens = [
-                  HomeScreen(position: snapshot.data),
+                  HomeScreen(
+                    position: snapshot.data,
+                    onThemeChanged: _toggleTheme,
+                  ),
                   // SearchScreen(),
                   // MapScreen(),
                   BookmarkScreen(),
@@ -408,7 +425,7 @@ class _MyAppState extends State<MyApp>
                 );
               }
 
-              return Text("Something went worng!");
+              return Text("Something went wrong.");
             },
           ),
         ));

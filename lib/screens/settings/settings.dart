@@ -3,8 +3,7 @@ import 'package:mobile/screens/settings/theme.dart';
 import 'package:mobile/widgets/appbar.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final ValueChanged<ThemeMode> onThemeChanged;
-  const SettingsScreen({required this.onThemeChanged, super.key});
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +25,7 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ThemeSettingsScreen(
-                    onThemeChanged: onThemeChanged,
-                  ),
+                  builder: (context) => ThemeSettingsScreen(),
                 ),
               );
             },

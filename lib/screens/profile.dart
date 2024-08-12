@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile/models/bookmark.dart';
+import 'package:mobile/models/theme.dart';
 import 'package:mobile/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -16,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<dynamic> _getTaxi() async {
     try {
       final response = await http.get(
-          Uri.parse("http://192.168.88.182:8000/api/taxis/id/${widget.id}"));
+          Uri.parse("http://192.168.88.181:8000/api/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -34,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
 
     return Scaffold(
@@ -60,8 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           if (snapshot.hasData) {
             final taxi = snapshot.data['data']['taxi'];
-
-            print("taxi_photos: ${taxi['taxi_photos']}");
 
             return CustomScrollView(
               slivers: [
@@ -234,10 +235,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         trailing: IconButton(
                           onPressed: () async {
-                            if (bookmarkProvider.isBookmarked(taxi))
+                            if (bookmarkProvider.isBookmarked(taxi)) {
                               await bookmarkProvider.removeBookmark(taxi);
-                            else
+
+                              Fluttertoast.showToast(
+                                msg: "Taxi is removed from bookmarks",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                textColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                backgroundColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                              );
+                            } else {
                               await bookmarkProvider.setBookmark(taxi);
+
+                              Fluttertoast.showToast(
+                                msg: "Taxi is added to bookmarks",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                textColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                backgroundColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                              );
+                            }
                           },
                           icon: Icon(
                             bookmarkProvider.isBookmarked(taxi)

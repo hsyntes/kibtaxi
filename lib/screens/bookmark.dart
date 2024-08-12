@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile/models/bookmark.dart';
 import 'package:mobile/screens/profile.dart';
 import 'package:mobile/widgets/appbar.dart';
@@ -21,6 +22,95 @@ class BookmarkScreen extends StatelessWidget {
           "My Taxis",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        actions: bookmarkProvider.bookmarks.length != 0
+            ? [
+                IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        showDragHandle: true,
+                        context: context,
+                        builder: (context) {
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * .1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          insetPadding: EdgeInsets.all(4),
+                                          title: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.bookmark,
+                                                size: 14,
+                                              ),
+                                              SizedBox(width: 4),
+                                              Text("Remove All")
+                                            ],
+                                          ),
+                                          titleTextStyle: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                          ),
+                                          content: Text(
+                                            "Want to remove all your saved taxis?",
+                                          ),
+                                          contentTextStyle: TextStyle(
+                                            fontSize: 14,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () async {
+                                                Navigator.pop(context);
+                                                await bookmarkProvider
+                                                    .removeAllBookmarks();
+                                              },
+                                              child: Text(
+                                                "YES",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text(
+                                    "Remove All",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.menu))
+              ]
+            : null,
       ),
       body: ListView.builder(
         itemCount: taxis.length,
@@ -52,10 +142,39 @@ class BookmarkScreen extends StatelessWidget {
                   ? Colors.white54
                   : Colors.black54,
               onPressed: () async {
-                if (bookmarkProvider.isBookmarked(taxi))
+                if (bookmarkProvider.isBookmarked(taxi)) {
                   await bookmarkProvider.removeBookmark(taxi);
-                else
+
+                  Fluttertoast.showToast(
+                    msg: "Taxi is removed from bookmarks",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    textColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
+                  );
+                } else {
                   await bookmarkProvider.setBookmark(taxi);
+
+                  Fluttertoast.showToast(
+                    msg: "Taxi is added to bookmarks",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    textColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
+                  );
+                }
               },
             ),
             subtitle: Column(

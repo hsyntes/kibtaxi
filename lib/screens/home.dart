@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mobile/models/bookmark.dart';
+import 'package:mobile/models/theme.dart';
 import 'package:mobile/screens/profile.dart';
 import 'package:mobile/screens/settings/settings.dart';
 import 'package:mobile/widgets/appbar.dart';
@@ -13,12 +14,11 @@ import "package:geocoding/geocoding.dart";
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import "package:fluttertoast/fluttertoast.dart";
 
-Route _createSettingsRoute(onThemeChanged) {
+Route _createSettingsRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => SettingsScreen(
-      onThemeChanged: onThemeChanged,
-    ),
+    pageBuilder: (context, animation, secondaryAnimation) => SettingsScreen(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.88.182:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://192.168.88.181:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.88.182:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.88.181:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 
@@ -157,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
 
     return Scaffold(
@@ -164,9 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset(
           Theme.of(context).brightness == Brightness.dark
               ? 'assets/icons/brand.light.png'
-              : "assets/icons/brand.dark.png",
-          // height: kToolbarHeight * .6,
-          height: 30,
+              : 'assets/icons/brand.dark.png',
+          height: 32,
         ),
         actions: [
           IconButton(
@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
-                _createSettingsRoute(widget.onThemeChanged),
+                _createSettingsRoute(),
               );
             },
             icon: const Icon(Icons.menu),
@@ -322,12 +322,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ? Colors.white54
                                           : Colors.black54,
                                       onPressed: () async {
-                                        if (bookmarkProvider.isBookmarked(taxi))
+                                        if (bookmarkProvider
+                                            .isBookmarked(taxi)) {
                                           await bookmarkProvider
                                               .removeBookmark(taxi);
-                                        else
+
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                "Taxi is removed from bookmarks",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            textColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            backgroundColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                          );
+                                        } else {
                                           await bookmarkProvider
                                               .setBookmark(taxi);
+
+                                          Fluttertoast.showToast(
+                                            msg: "Taxi is added to bookmarks",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            textColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            backgroundColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                          );
+                                        }
                                       },
                                     ),
                                     subtitle: Column(
@@ -601,10 +638,41 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Colors.white54
                               : Colors.black54,
                           onPressed: () async {
-                            if (bookmarkProvider.isBookmarked(taxi))
+                            if (bookmarkProvider.isBookmarked(taxi)) {
                               await bookmarkProvider.removeBookmark(taxi);
-                            else
+
+                              Fluttertoast.showToast(
+                                msg: "Taxi is removed from bookmarks",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                textColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                backgroundColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                              );
+                            } else {
                               await bookmarkProvider.setBookmark(taxi);
+
+                              Fluttertoast.showToast(
+                                msg: "Taxi is added to bookmarks",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                textColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                backgroundColor: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                              );
+                            }
                           },
                         ),
                         subtitle: Column(
@@ -783,9 +851,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class HomeScreen extends StatefulWidget {
   final position;
-  final ValueChanged<ThemeMode> onThemeChanged;
 
-  const HomeScreen({this.position, required this.onThemeChanged, super.key});
+  const HomeScreen({this.position, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

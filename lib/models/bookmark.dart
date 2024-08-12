@@ -51,6 +51,17 @@ class BookmarkProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeAllBookmarks() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? bookmarks = prefs.getStringList("bookmarks") ?? [];
+
+    bookmarks = [];
+    await prefs.setStringList("bookmarks", bookmarks);
+    _bookmarks = [];
+
+    notifyListeners();
+  }
+
   bool isBookmarked(Map<String, dynamic> value) {
     return _bookmarks.any((bookmark) => bookmark['_id'] == value['_id']);
   }

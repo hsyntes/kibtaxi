@@ -6,8 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mobile/models/theme.dart';
 import 'package:mobile/screens/bookmark.dart';
 import 'package:mobile/screens/home.dart';
-import 'package:mobile/screens/map.dart';
-import 'package:mobile/screens/search.dart';
 import 'package:mobile/themes/dark.dart';
 import 'package:mobile/themes/light.dart';
 import "package:http/http.dart" as http;
@@ -16,8 +14,6 @@ import 'package:provider/provider.dart';
 
 class _MyAppState extends State<MyApp>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
-  ThemeMode _themeMode = ThemeMode.system;
-
   late Future<dynamic> _position;
   int _currentIndex = 0;
 
@@ -27,7 +23,7 @@ class _MyAppState extends State<MyApp>
   Future<void> _checkApiHealth() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.88.182:8000/api"),
+        Uri.parse("http://192.168.88.181:8000/api"),
       );
 
       print("Connection to the server status: ${response.statusCode}");
@@ -82,12 +78,6 @@ class _MyAppState extends State<MyApp>
   void onUpdated() {
     setState(() {
       _position = _getPosition();
-    });
-  }
-
-  void _toggleTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
     });
   }
 
@@ -147,7 +137,6 @@ class _MyAppState extends State<MyApp>
         title: "Cyprux Taxi",
         theme: LightThemeData.theme,
         darkTheme: DarkThemeData.theme,
-        // themeMode: _themeMode,
         themeMode: themeProvider.themeMode,
         home: Scaffold(
           body: FutureBuilder<dynamic>(
@@ -403,7 +392,6 @@ class _MyAppState extends State<MyApp>
                 final List<Widget> _screens = [
                   HomeScreen(
                     position: snapshot.data,
-                    onThemeChanged: _toggleTheme,
                   ),
                   // SearchScreen(),
                   // MapScreen(),

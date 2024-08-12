@@ -4,8 +4,7 @@ import 'package:mobile/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 
 class ThemeSettingsScreen extends StatelessWidget {
-  final ValueChanged<ThemeMode> onThemeChanged;
-  const ThemeSettingsScreen({required this.onThemeChanged, super.key});
+  const ThemeSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +22,10 @@ class ThemeSettingsScreen extends StatelessWidget {
           RadioListTile(
             title: Text("Dark"),
             value: ThemeMode.dark,
-            // groupValue: Theme.of(context).brightness == Brightness.dark
-            //     ? ThemeMode.dark
-            //     : ThemeMode.light,
-            groupValue: themeProvider.themeMode,
+            groupValue: Theme.of(context).brightness == Brightness.dark
+                ? ThemeMode.dark
+                : ThemeMode.light,
+            // groupValue: themeProvider.themeMode,
             selected: Theme.of(context).brightness == Brightness.dark,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (value) {
@@ -38,10 +37,10 @@ class ThemeSettingsScreen extends StatelessWidget {
           RadioListTile(
             title: Text("Light"),
             value: ThemeMode.light,
-            // groupValue: Theme.of(context).brightness == Brightness.light
-            //     ? ThemeMode.light
-            //     : ThemeMode.dark,
-            groupValue: themeProvider.themeMode,
+            groupValue: Theme.of(context).brightness == Brightness.light
+                ? ThemeMode.light
+                : ThemeMode.dark,
+            // groupValue: themeProvider.themeMode,
             selected: Theme.of(context).brightness == Brightness.light,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (value) {

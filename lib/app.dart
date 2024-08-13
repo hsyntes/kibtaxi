@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp>
   Future<void> _checkApiHealth() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.88.181:8000/api"),
+        Uri.parse("http://192.168.119.108:8000/api"),
       );
 
       print("Connection to the server status: ${response.statusCode}");
@@ -134,286 +134,283 @@ class _MyAppState extends State<MyApp>
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
-        title: "Cyprux Taxi",
-        theme: LightThemeData.theme,
-        darkTheme: DarkThemeData.theme,
-        themeMode: themeProvider.themeMode,
-        home: Scaffold(
-          body: FutureBuilder<dynamic>(
-            future: _position,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+      title: "Cyprux Taxi",
+      theme: LightThemeData.theme,
+      darkTheme: DarkThemeData.theme,
+      themeMode: themeProvider.themeMode,
+      home: Scaffold(
+        body: FutureBuilder<dynamic>(
+          future: _position,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * .3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 42,
+                        ),
+                        SizedBox(height: 8),
+                        FadeTransition(
+                          opacity: _animation!,
+                          child: Text(
+                            'Finding your location',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * .4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SpinKitRipple(
+                          size: MediaQuery.of(context).size.width * 0.5,
+                          duration: Duration(milliseconds: 2000),
+                          itemBuilder: (context, index) {
+                            return DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: BorderRadius.circular(360),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .2,
+                    height: MediaQuery.of(context).size.height * .3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/icons/app_icon.png",
+                          fit: BoxFit.contain,
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            }
+
+            if (snapshot.hasError) {
+              if (snapshot.error.toString() ==
+                  'Location services are disabled') {
                 return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * .3,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * .8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.location_on,
-                            color: Theme.of(context).colorScheme.primary,
+                            Icons.location_off,
+                            color: Theme.of(context).primaryColor,
                             size: 42,
                           ),
                           SizedBox(height: 8),
-                          FadeTransition(
-                            opacity: _animation!,
+                          Padding(
+                            padding: EdgeInsets.all(16),
                             child: Text(
-                              'Finding your location',
+                              "Location services are disabled. Please enable location services to use CypruxTaxi.",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * .4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SpinKitRipple(
-                            size: MediaQuery.of(context).size.width * 0.5,
-                            duration: Duration(milliseconds: 2000),
-                            itemBuilder: (context, index) {
-                              return DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(360),
-                                ),
-                              );
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await Geolocator.openLocationSettings();
+
+                              Geolocator.getServiceStatusStream()
+                                  .listen((status) async {
+                                if (status == ServiceStatus.enabled) {
+                                  setState(() {
+                                    _position = _getPosition();
+                                  });
+                                }
+                              });
                             },
+                            child: Text("Enable Location Services"),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * .2,
-                      height: MediaQuery.of(context).size.height * .3,
+                      height: MediaQuery.of(context).size.height * .2,
+                      child: Image.asset(
+                        "assets/icons/app_icon.png",
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  ],
+                );
+              } else if (snapshot.error.toString() ==
+                  'Location permissions are denied') {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * .8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            "assets/icons/app_icon.png",
-                            fit: BoxFit.contain,
-                          )
+                          Icon(
+                            Icons.location_off,
+                            color: Theme.of(context).primaryColor,
+                            size: 42,
+                          ),
+                          SizedBox(height: 8),
+                          Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              "Location permissions are denied.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                _position = _getPosition();
+                              });
+                            },
+                            child: Text("Enable Location Permissions"),
+                          ),
                         ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .2,
+                      height: MediaQuery.of(context).size.height * .2,
+                      child: Image.asset(
+                        "assets/icons/app_icon.png",
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  ],
+                );
+              } else if (snapshot.error.toString() ==
+                  "Location permissions are permanently denied") {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * .8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.location_off,
+                            color: Theme.of(context).primaryColor,
+                            size: 42,
+                          ),
+                          SizedBox(height: 8),
+                          Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              "Location permissions are permanently denied on this app. Please open your location settings & allow location access permissions to CypruxTaxi.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await Geolocator.openLocationSettings();
+
+                              Geolocator.getServiceStatusStream()
+                                  .listen((status) async {
+                                if (status == ServiceStatus.enabled) {
+                                  setState(() {
+                                    _position = _getPosition();
+                                  });
+                                }
+                              });
+                            },
+                            child: Text("Open Location Settings"),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .2,
+                      height: MediaQuery.of(context).size.height * .2,
+                      child: Image.asset(
+                        "assets/icons/app_icon.png",
+                        fit: BoxFit.contain,
                       ),
                     )
                   ],
                 );
               }
+            }
 
-              if (snapshot.hasError) {
-                if (snapshot.error.toString() ==
-                    'Location services are disabled') {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * .8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_off,
-                              color: Theme.of(context).primaryColor,
-                              size: 42,
-                            ),
-                            SizedBox(height: 8),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Text(
-                                "Location services are disabled. Please enable location services to use CypruxTaxi.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await Geolocator.openLocationSettings();
+            if (snapshot.hasData) {
+              final List<Widget> _screens = [
+                HomeScreen(
+                  position: snapshot.data,
+                ),
+                // SearchScreen(),
+                // MapScreen(),
+                BookmarkScreen(),
+              ];
 
-                                Geolocator.getServiceStatusStream()
-                                    .listen((status) async {
-                                  print("status: $status");
+              return Scaffold(
+                body: IndexedStack(
+                  index: _currentIndex,
+                  children: _screens,
+                ),
+                bottomNavigationBar: MyBottomNavigationBar(
+                  currentIndex: _currentIndex,
+                  onTap: onTap,
+                ),
+              );
+            }
 
-                                  if (status == ServiceStatus.enabled) {
-                                    setState(() {
-                                      _position = _getPosition();
-                                    });
-                                  }
-                                });
-                              },
-                              child: Text("Enable Location Services"),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .2,
-                        height: MediaQuery.of(context).size.height * .2,
-                        child: Image.asset(
-                          "assets/icons/app_icon.png",
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    ],
-                  );
-                } else if (snapshot.error.toString() ==
-                    'Location permissions are denied') {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * .8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_off,
-                              color: Theme.of(context).primaryColor,
-                              size: 42,
-                            ),
-                            SizedBox(height: 8),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Text(
-                                "Location permissions are denied.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () async {
-                                setState(() {
-                                  _position = _getPosition();
-                                });
-                              },
-                              child: Text("Enable Location Permissions"),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .2,
-                        height: MediaQuery.of(context).size.height * .2,
-                        child: Image.asset(
-                          "assets/icons/app_icon.png",
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    ],
-                  );
-                } else if (snapshot.error.toString() ==
-                    "Location permissions are permanently denied") {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * .8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_off,
-                              color: Theme.of(context).primaryColor,
-                              size: 42,
-                            ),
-                            SizedBox(height: 8),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Text(
-                                "Location permissions are permanently denied on this app. Please open your location settings & allow location access permissions to CypruxTaxi.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await Geolocator.openLocationSettings();
-
-                                Geolocator.getServiceStatusStream()
-                                    .listen((status) async {
-                                  print("status: $status");
-
-                                  if (status == ServiceStatus.enabled) {
-                                    setState(() {
-                                      _position = _getPosition();
-                                    });
-                                  }
-                                });
-                              },
-                              child: Text("Open Location Settings"),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .2,
-                        height: MediaQuery.of(context).size.height * .2,
-                        child: Image.asset(
-                          "assets/icons/app_icon.png",
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    ],
-                  );
-                }
-              }
-
-              if (snapshot.hasData) {
-                final List<Widget> _screens = [
-                  HomeScreen(
-                    position: snapshot.data,
-                  ),
-                  // SearchScreen(),
-                  // MapScreen(),
-                  BookmarkScreen(),
-                ];
-
-                return Scaffold(
-                  body: IndexedStack(
-                    index: _currentIndex,
-                    children: _screens,
-                  ),
-                  bottomNavigationBar: MyBottomNavigationBar(
-                    currentIndex: _currentIndex,
-                    onTap: onTap,
-                  ),
-                );
-              }
-
-              return Text("Something went wrong.");
-            },
-          ),
-        ));
+            return Text("Something went wrong.");
+          },
+        ),
+      ),
+    );
   }
 }
 

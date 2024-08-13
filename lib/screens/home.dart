@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mobile/models/bookmark.dart';
-import 'package:mobile/models/theme.dart';
 import 'package:mobile/screens/profile.dart';
 import 'package:mobile/screens/settings/settings.dart';
 import 'package:mobile/widgets/appbar.dart';
@@ -76,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.88.181:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://192.168.119.108:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -97,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.88.181:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://192.168.119.108:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 
@@ -157,7 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
 
     return Scaffold(
@@ -170,9 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              print("Search");
-            },
+            onPressed: () {},
             icon: const Icon(Icons.search),
           ),
           IconButton(

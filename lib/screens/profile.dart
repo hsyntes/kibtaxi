@@ -5,7 +5,6 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile/models/bookmark.dart';
-import 'package:mobile/models/theme.dart';
 import 'package:mobile/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -18,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<dynamic> _getTaxi() async {
     try {
       final response = await http.get(
-          Uri.parse("http://192.168.88.181:8000/api/taxis/id/${widget.id}"));
+          Uri.parse("http://192.168.119.108:8000/api/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -36,7 +35,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
 
     return Scaffold(

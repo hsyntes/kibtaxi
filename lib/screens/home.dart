@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mobile/app_localization.dart';
 import 'package:mobile/models/bookmark.dart';
 import 'package:mobile/screens/profile.dart';
 import 'package:mobile/screens/settings/settings.dart';
@@ -167,10 +168,10 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 32,
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.search),
+          // ),
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
@@ -201,7 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              "Getting most popular taxis",
+                              AppLocalizations.of(context)!
+                                  .translate("getting_most_popular"),
                               style: TextStyle(
                                 color: Theme.of(context).brightness ==
                                         Brightness.dark
@@ -265,9 +267,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              "Most populars in $_city",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                              AppLocalizations.of(context)!.translate(
+                                  'most_populars',
+                                  params: {'city': "$_city"}),
+                            )
                           ],
                         ),
                         SizedBox(height: 6),
@@ -324,8 +327,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               .removeBookmark(taxi);
 
                                           Fluttertoast.showToast(
-                                            msg:
-                                                "Taxi is removed from bookmarks",
+                                            msg: AppLocalizations.of(context)!
+                                                .translate("taxi_removed"),
                                             toastLength: Toast.LENGTH_SHORT,
                                             gravity: ToastGravity.BOTTOM,
                                             timeInSecForIosWeb: 1,
@@ -345,7 +348,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               .setBookmark(taxi);
 
                                           Fluttertoast.showToast(
-                                            msg: "Taxi is added to bookmarks",
+                                            msg: AppLocalizations.of(context)!
+                                                .translate("taxi_added"),
                                             toastLength: Toast.LENGTH_SHORT,
                                             gravity: ToastGravity.BOTTOM,
                                             timeInSecForIosWeb: 1,
@@ -508,7 +512,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   semanticLabel: "Phone",
                                                 ),
                                                 SizedBox(width: 6),
-                                                Text("Phone")
+                                                Text(
+                                                  AppLocalizations.of(context)!
+                                                      .translate("phone"),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -581,7 +588,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              "Others around you",
+                              AppLocalizations.of(context)!
+                                  .translate("others_around"),
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -638,7 +646,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               await bookmarkProvider.removeBookmark(taxi);
 
                               Fluttertoast.showToast(
-                                msg: "Taxi is removed from bookmarks",
+                                msg: AppLocalizations.of(context)!
+                                    .translate("taxi_removed"),
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 1,
@@ -655,7 +664,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               await bookmarkProvider.setBookmark(taxi);
 
                               Fluttertoast.showToast(
-                                msg: "Taxi is added to bookmarks",
+                                msg: AppLocalizations.of(context)!
+                                    .translate("taxi_added"),
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 1,
@@ -778,7 +788,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         semanticLabel: "Phone",
                                       ),
                                       SizedBox(width: 6),
-                                      Text("Phone")
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .translate("phone"),
+                                      )
                                     ],
                                   ),
                                 ),

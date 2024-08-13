@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:mobile/app_localization.dart';
 import 'package:mobile/models/theme.dart';
 import 'package:mobile/screens/bookmark.dart';
 import 'package:mobile/screens/home.dart';
@@ -14,6 +17,7 @@ import 'package:provider/provider.dart';
 
 class _MyAppState extends State<MyApp>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+  Locale? _locale;
   late Future<dynamic> _position;
   int _currentIndex = 0;
 
@@ -69,6 +73,12 @@ class _MyAppState extends State<MyApp>
     return position;
   }
 
+  void setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
+
   void onTap(index) {
     setState(() {
       _currentIndex = index;
@@ -96,8 +106,19 @@ class _MyAppState extends State<MyApp>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
+    // && _position == null
+
     if (state == AppLifecycleState.paused) {
       _handleLocationPermission();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_locale == null) {
+      Locale locale = WidgetsBinding.instance.window.locale;
+      _locale = locale.languageCode == 'tr' ? Locale('tr') : Locale('en');
     }
   }
 
@@ -138,6 +159,22 @@ class _MyAppState extends State<MyApp>
       theme: LightThemeData.theme,
       darkTheme: DarkThemeData.theme,
       themeMode: themeProvider.themeMode,
+      locale: _locale,
+      supportedLocales: [Locale('en', ''), Locale('tr', '')],
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      localeResolutionCallback: (locale, supportedLocales) {
+        for (var supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        return supportedLocales.first;
+      },
       home: Scaffold(
         body: FutureBuilder<dynamic>(
           future: _position,
@@ -159,14 +196,15 @@ class _MyAppState extends State<MyApp>
                         ),
                         SizedBox(height: 8),
                         FadeTransition(
-                          opacity: _animation!,
                           child: Text(
-                            'Finding your location',
+                            AppLocalizations.of(context)!
+                                .translate("finding_location"),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          opacity: _animation!,
                         ),
                       ],
                     ),
@@ -233,7 +271,8 @@ class _MyAppState extends State<MyApp>
                           Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
-                              "Location services are disabled. Please enable location services to use CypruxTaxi.",
+                              AppLocalizations.of(context)!
+                                  .translate("location_services_disabled"),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 20,
@@ -255,7 +294,10 @@ class _MyAppState extends State<MyApp>
                                 }
                               });
                             },
-                            child: Text("Enable Location Services"),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .translate("enable_location_services"),
+                            ),
                           ),
                         ],
                       ),
@@ -292,7 +334,8 @@ class _MyAppState extends State<MyApp>
                           Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
-                              "Location permissions are denied.",
+                              AppLocalizations.of(context)!
+                                  .translate("location_permissions_denied"),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16,
@@ -307,7 +350,10 @@ class _MyAppState extends State<MyApp>
                                 _position = _getPosition();
                               });
                             },
-                            child: Text("Enable Location Permissions"),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .translate("allow_location_permissions"),
+                            ),
                           ),
                         ],
                       ),
@@ -344,7 +390,8 @@ class _MyAppState extends State<MyApp>
                           Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
-                              "Location permissions are permanently denied on this app. Please open your location settings & allow location access permissions to CypruxTaxi.",
+                              AppLocalizations.of(context)!.translate(
+                                  "location_permissions_permanently_denied"),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16,
@@ -366,7 +413,10 @@ class _MyAppState extends State<MyApp>
                                 }
                               });
                             },
-                            child: Text("Open Location Settings"),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .translate("open_location_settings"),
+                            ),
                           ),
                         ],
                       ),
@@ -406,7 +456,7 @@ class _MyAppState extends State<MyApp>
               );
             }
 
-            return Text("Something went wrong.");
+            return Center(child: Text("Something went wrong."));
           },
         ),
       ),
@@ -415,6 +465,9 @@ class _MyAppState extends State<MyApp>
 }
 
 class MyApp extends StatefulWidget {
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+
   const MyApp({super.key});
 
   @override

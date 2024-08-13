@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobile/app_localization.dart';
 import 'package:mobile/models/bookmark.dart';
 import 'package:mobile/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
@@ -191,7 +192,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         semanticLabel: "Phone",
                                       ),
                                       SizedBox(width: 6),
-                                      Text("Phone")
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .translate("phone"),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -237,7 +241,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               await bookmarkProvider.removeBookmark(taxi);
 
                               Fluttertoast.showToast(
-                                msg: "Taxi is removed from bookmarks",
+                                msg: AppLocalizations.of(context)!
+                                    .translate("taxi_removed"),
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 1,
@@ -254,7 +259,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               await bookmarkProvider.setBookmark(taxi);
 
                               Fluttertoast.showToast(
-                                msg: "Taxi is added to bookmarks",
+                                msg: AppLocalizations.of(context)!
+                                    .translate("taxi_added"),
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 1,

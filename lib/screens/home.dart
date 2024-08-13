@@ -48,6 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _getCity() async {
     try {
+      // List<Placemark> placemark =
+      //     await placemarkFromCoordinates(35.332001, 33.318963);
+
       List<Placemark> placemark = await placemarkFromCoordinates(
           widget.position.latitude, widget.position.longitude);
 
@@ -76,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "http://192.168.119.108:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "http://35.158.120.154:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -97,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.119.108:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          'http://35.158.120.154:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
         ),
       );
 
@@ -277,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         CarouselSlider.builder(
                           itemCount: taxis.length,
                           options: CarouselOptions(
-                            // height: MediaQuery.of(context).size.height * .3,
+                            height: MediaQuery.of(context).size.height * .3,
                             autoPlay: false,
                             enlargeCenterPage: true,
                             enableInfiniteScroll: false,
@@ -288,6 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             final taxi = taxis[index];
 
                             return Card(
+                              shadowColor: Colors.transparent,
                               child: Stack(
                                 children: [
                                   ListTile(
@@ -384,8 +388,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         SizedBox(height: 8),
                                         Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
@@ -398,9 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white54
                                                   : Colors.black54,
                                             ),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
+                                            SizedBox(width: 2),
                                             Text(
                                               "${taxi['taxi_city']}",
                                               style: TextStyle(
@@ -419,9 +419,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           "${taxi['taxi_address']}",
                                           style: TextStyle(fontSize: 12),
                                         ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
+                                        SizedBox(height: 8),
                                         Row(
                                           children: [
                                             Text(
@@ -470,6 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       );
                                     },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
                                   ),
                                   Positioned(
                                     bottom: 0,
@@ -495,26 +496,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.only(
                                                   bottomLeft:
-                                                      Radius.circular(18),
+                                                      Radius.circular(16),
                                                 ),
                                               ),
                                               elevation: 0,
                                             ),
                                             child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
                                                 Icon(
                                                   Icons.phone,
                                                   size: 18,
-                                                  semanticLabel: "Phone",
                                                 ),
                                                 SizedBox(width: 6),
                                                 Text(
                                                   AppLocalizations.of(context)!
-                                                      .translate("phone"),
+                                                      .translate('phone'),
                                                 )
                                               ],
                                             ),
@@ -539,14 +537,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.only(
                                                   bottomRight:
-                                                      Radius.circular(18),
+                                                      Radius.circular(16),
                                                 ),
                                               ),
                                               elevation: 0,
                                             ),
                                             child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
@@ -554,22 +550,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   MaterialCommunityIcons
                                                       .whatsapp,
                                                   size: 18,
-                                                  semanticLabel: "WhatsApp",
                                                 ),
                                                 SizedBox(width: 6),
                                                 Text("WhatsApp")
                                               ],
                                             ),
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             );
                           },
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -617,220 +612,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       final taxi = _taxis[index];
 
-                      return ListTile(
-                        leading: taxi['taxi_profile'] != null
-                            ? ClipOval(
-                                child: Image.network(
-                                  taxi['taxi_profile'],
-                                  width: 56,
-                                  height: 56,
-                                  semanticLabel: "Profile Image",
-                                ),
-                              )
-                            : CircleAvatar(),
-                        title: Text(
-                          taxi['taxi_name'],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(bookmarkProvider.isBookmarked(taxi)
-                              ? Icons.bookmark
-                              : Icons.bookmark_outline),
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white54
-                              : Colors.black54,
-                          onPressed: () async {
-                            if (bookmarkProvider.isBookmarked(taxi)) {
-                              await bookmarkProvider.removeBookmark(taxi);
-
-                              Fluttertoast.showToast(
-                                msg: AppLocalizations.of(context)!
-                                    .translate("taxi_removed"),
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                textColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                backgroundColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                              );
-                            } else {
-                              await bookmarkProvider.setBookmark(taxi);
-
-                              Fluttertoast.showToast(
-                                msg: AppLocalizations.of(context)!
-                                    .translate("taxi_added"),
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                textColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                backgroundColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                              );
-                            }
-                          },
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "@${taxi['taxi_username']}",
-                              style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white54
-                                    : Colors.black54,
-                                fontSize: 12,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 16,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white54
-                                      : Colors.black54,
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                Text(
-                                  "${taxi['taxi_city']}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white54
-                                        : Colors.black54,
-                                    fontSize: 12,
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "${taxi['taxi_address']}",
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "${taxi['taxi_popularity']}",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                                SizedBox(width: 3),
-                                RatingBar.builder(
-                                  updateOnDrag: false,
-                                  itemCount: 5,
-                                  itemSize: 14,
-                                  allowHalfRating: true,
-                                  ignoreGestures: true,
-                                  initialRating: taxi['taxi_popularity'],
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  unratedColor: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white24
-                                      : Colors.black26,
-                                  onRatingUpdate: (rating) {},
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                  onPressed: () async {
-                                    await launchUrl(
-                                      Uri(
-                                        scheme: "tel",
-                                        path: taxi['taxi_phone'],
-                                      ),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.blueAccent,
-                                    elevation: 0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.phone,
-                                        size: 18,
-                                        semanticLabel: "Phone",
-                                      ),
-                                      SizedBox(width: 6),
-                                      Text(
-                                        AppLocalizations.of(context)!
-                                            .translate("phone"),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    await launchUrl(
-                                      Uri(
-                                        scheme: "https",
-                                        host: "api.whatsapp.com",
-                                        path: "send",
-                                        queryParameters: {
-                                          'phone': taxi['taxi_phone']
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.green,
-                                    elevation: 0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        MaterialCommunityIcons.whatsapp,
-                                        size: 18,
-                                        semanticLabel: "WhatsApp",
-                                      ),
-                                      SizedBox(width: 6),
-                                      Text("WhatsApp")
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                      return InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -842,7 +624,232 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
-                        isThreeLine: true,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: taxi['taxi_profile'] != null
+                                  ? ClipOval(
+                                      child: Image.network(
+                                        taxi['taxi_profile'],
+                                        width: 42,
+                                        height: 42,
+                                        semanticLabel: "Profile Image",
+                                      ),
+                                    )
+                                  : CircleAvatar(),
+                              title: Text(
+                                taxi['taxi_name'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: IconButton(
+                                icon: Icon(bookmarkProvider.isBookmarked(taxi)
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_outline),
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white54
+                                    : Colors.black54,
+                                onPressed: () async {
+                                  if (bookmarkProvider.isBookmarked(taxi)) {
+                                    await bookmarkProvider.removeBookmark(taxi);
+
+                                    Fluttertoast.showToast(
+                                      msg: AppLocalizations.of(context)!
+                                          .translate("taxi_removed"),
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      backgroundColor:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.black
+                                              : Colors.white,
+                                    );
+                                  } else {
+                                    await bookmarkProvider.setBookmark(taxi);
+
+                                    Fluttertoast.showToast(
+                                      msg: AppLocalizations.of(context)!
+                                          .translate("taxi_added"),
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      backgroundColor:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.black
+                                              : Colors.white,
+                                    );
+                                  }
+                                },
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "@${taxi['taxi_username']}",
+                                    style: TextStyle(
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white54
+                                          : Colors.black54,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.location_on,
+                                        size: 16,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.white54
+                                            : Colors.black54,
+                                      ),
+                                      SizedBox(width: 2),
+                                      Text(
+                                        "${taxi['taxi_city']}",
+                                        style: TextStyle(
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white54
+                                              : Colors.black54,
+                                          fontSize: 12,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "${taxi['taxi_address']}",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${taxi['taxi_popularity']}",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                      SizedBox(width: 3),
+                                      RatingBar.builder(
+                                        updateOnDrag: false,
+                                        itemCount: 5,
+                                        itemSize: 14,
+                                        allowHalfRating: true,
+                                        ignoreGestures: true,
+                                        initialRating: taxi['taxi_popularity'],
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        unratedColor:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white24
+                                                : Colors.black26,
+                                        onRatingUpdate: (rating) {},
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              isThreeLine: true,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 16, right: 16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      await launchUrl(
+                                        Uri(
+                                          scheme: "tel",
+                                          path: taxi['taxi_phone'],
+                                        ),
+                                      );
+                                    },
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.blueAccent,
+                                      elevation: 0,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.phone,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          AppLocalizations.of(context)!
+                                              .translate('phone'),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await launchUrl(
+                                        Uri(
+                                          scheme: "https",
+                                          host: "api.whatsapp.com",
+                                          path: "send",
+                                          queryParameters: {
+                                            'phone': taxi['taxi_phone']
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.green,
+                                      elevation: 0,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          MaterialCommunityIcons.whatsapp,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 6),
+                                        Text("WhatsApp")
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (index < taxi.length - 1)
+                              SizedBox(
+                                height: 16,
+                              )
+                          ],
+                        ),
                       );
                     },
                   ),

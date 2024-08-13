@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp>
   Future<void> _checkApiHealth() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.119.108:8000/api"),
+        Uri.parse("http://35.158.120.154:8000/api"),
       );
 
       print("Connection to the server status: ${response.statusCode}");

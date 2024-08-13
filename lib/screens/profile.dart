@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<dynamic> _getTaxi() async {
     try {
       final response = await http.get(
-          Uri.parse("http://192.168.119.108:8000/api/taxis/id/${widget.id}"));
+          Uri.parse("http://35.158.120.154:8000/api/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -161,78 +161,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                  onPressed: () async {
-                                    await launchUrl(
-                                      Uri(
-                                        scheme: "tel",
-                                        path: taxi['taxi_phone'],
-                                      ),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent,
-                                    foregroundColor: Colors.white,
-                                    padding:
-                                        EdgeInsets.only(left: 16, right: 16),
-                                    // elevation: 0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.phone,
-                                        size: 18,
-                                        semanticLabel: "Phone",
-                                      ),
-                                      SizedBox(width: 6),
-                                      Text(
-                                        AppLocalizations.of(context)!
-                                            .translate("phone"),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    await launchUrl(
-                                      Uri(
-                                        scheme: "https",
-                                        host: "api.whatsapp.com",
-                                        path: "send",
-                                        queryParameters: {
-                                          'phone': taxi['taxi_phone']
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.green,
-                                    elevation: 0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        MaterialCommunityIcons.whatsapp,
-                                        size: 18,
-                                        semanticLabel: "WhatsApp",
-                                      ),
-                                      SizedBox(width: 6),
-                                      Text("WhatsApp")
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
                           ],
                         ),
                         trailing: IconButton(
@@ -287,6 +215,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         isThreeLine: true,
                       ),
+                      SizedBox(height: 8),
+                      Padding(
+                        padding: EdgeInsets.only(right: 16, left: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                await launchUrl(
+                                  Uri(
+                                    scheme: "tel",
+                                    path: taxi['taxi_phone'],
+                                  ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.phone,
+                                    size: 18,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .translate('phone'),
+                                  )
+                                ],
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await launchUrl(
+                                  Uri(
+                                    scheme: "https",
+                                    host: "api.whatsapp.com",
+                                    path: "send",
+                                    queryParameters: {
+                                      'phone': taxi['taxi_phone']
+                                    },
+                                  ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.green,
+                                elevation: 0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    MaterialCommunityIcons.whatsapp,
+                                    size: 18,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text("WhatsApp")
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

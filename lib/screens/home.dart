@@ -273,6 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               AppLocalizations.of(context)!.translate(
                                   'most_populars',
                                   params: {'city': "$_city"}),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             )
                           ],
                         ),

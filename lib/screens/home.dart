@@ -281,7 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         CarouselSlider.builder(
                           itemCount: taxis.length,
                           options: CarouselOptions(
-                            height: MediaQuery.of(context).size.height * .3,
+                            height: MediaQuery.of(context).size.width >= 320
+                                ? MediaQuery.of(context).size.height * .24
+                                : MediaQuery.of(context).size.height * .28,
                             autoPlay: false,
                             enlargeCenterPage: true,
                             enableInfiniteScroll: false,
@@ -300,8 +302,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ? ClipOval(
                                             child: Image.network(
                                               taxi['taxi_profile'],
-                                              width: 56,
-                                              height: 56,
                                               semanticLabel: "Profile Image",
                                             ),
                                           )
@@ -439,7 +439,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               allowHalfRating: true,
                                               ignoreGestures: true,
                                               initialRating:
-                                                  taxi['taxi_popularity'],
+                                                  taxi['taxi_popularity']
+                                                      .toDouble(),
                                               itemBuilder: (context, _) => Icon(
                                                 Icons.star,
                                                 color: Theme.of(context)
@@ -632,8 +633,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? ClipOval(
                                       child: Image.network(
                                         taxi['taxi_profile'],
-                                        width: 42,
-                                        height: 42,
+                                        width: 40,
+                                        height: 40,
                                         semanticLabel: "Profile Image",
                                       ),
                                     )

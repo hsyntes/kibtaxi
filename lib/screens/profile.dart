@@ -73,8 +73,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ? ClipOval(
                                 child: Image.network(
                                   taxi['taxi_profile'],
-                                  width: 56,
-                                  height: 56,
                                   semanticLabel: "Profile Image",
                                 ),
                               )
@@ -316,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       transitionOnUserGestures: true,
                                       tag: 'imageHero$index',
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(8),
                                         child: Image.network(
                                           taxi['taxi_photos'][index],
                                           fit: BoxFit.contain,

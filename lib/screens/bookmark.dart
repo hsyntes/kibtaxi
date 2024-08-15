@@ -143,8 +143,8 @@ class BookmarkScreen extends StatelessWidget {
                             ? ClipOval(
                                 child: Image.network(
                                   taxi['taxi_profile'],
-                                  width: 42,
-                                  height: 42,
+                                  width: 40,
+                                  height: 40,
                                   semanticLabel: "Profile Image",
                                 ),
                               )

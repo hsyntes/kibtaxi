@@ -106,9 +106,7 @@ class _MyAppState extends State<MyApp>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    // && _position == null
-
-    if (state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.paused && _position == null) {
       _handleLocationPermission();
     }
   }

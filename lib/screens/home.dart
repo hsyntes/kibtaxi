@@ -284,7 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: MediaQuery.of(context).size.width >= 320
                                 ? MediaQuery.of(context).size.height * .24
                                 : MediaQuery.of(context).size.height * .28,
-                            autoPlay: false,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(milliseconds: 3500),
                             enlargeCenterPage: true,
                             enableInfiniteScroll: false,
                             initialPage: 0,
@@ -294,7 +295,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             final taxi = taxis[index];
 
                             return Card(
-                              shadowColor: Colors.transparent,
                               child: Stack(
                                 children: [
                                   ListTile(

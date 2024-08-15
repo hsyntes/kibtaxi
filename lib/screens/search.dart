@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/widgets/searchbar.dart';
+import 'package:kibtaxi/widgets/searchbar.dart';
 
 class _SearchScreenState extends State<SearchScreen> {
   @override

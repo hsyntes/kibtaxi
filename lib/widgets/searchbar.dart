@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/widgets/appbar.dart';
 
 class _MySearchBarState extends State<MySearchBar> {
   @override

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/screens/settings/language.dart';
-import 'package:mobile/screens/settings/theme.dart';
-import 'package:mobile/widgets/appbar.dart';
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/screens/settings/language.dart';
+import 'package:kibtaxi/screens/settings/theme.dart';
+import 'package:kibtaxi/widgets/appbar.dart';
 
 Route _createThemeSettingsRoute() {
   return PageRouteBuilder(

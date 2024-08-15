@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/models/theme.dart';
-import 'package:mobile/widgets/appbar.dart';
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/models/theme.dart';
+import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 
 class ThemeSettingsScreen extends StatelessWidget {

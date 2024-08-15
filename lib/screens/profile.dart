@@ -5,10 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/models/bookmark.dart';
-import 'package:mobile/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/models/bookmark.dart';
+import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -354,8 +354,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             );
-
-            return Text("The data has just come!");
           }
 
           return Text("");

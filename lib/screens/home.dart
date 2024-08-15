@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/models/bookmark.dart';
-import 'package:mobile/screens/profile.dart';
-import 'package:mobile/screens/settings/settings.dart';
-import 'package:mobile/widgets/appbar.dart';
 import "package:http/http.dart" as http;
 import "package:geocoding/geocoding.dart";
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/models/bookmark.dart';
+import 'package:kibtaxi/screens/profile.dart';
+import 'package:kibtaxi/screens/settings/settings.dart';
+import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -76,11 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<dynamic> _getPopularTaxis() async {
     try {
-      // final response = await http.get(Uri.parse(
-      //     "${dotenv.env['API_URL']}/taxis/popular?lat=35.095335&long=33.930475"));
-
       final response = await http.get(Uri.parse(
-          "${dotenv.env['API_URL']}/taxis/popular?/lat=${widget.position.latitude}&longitude=${widget.position.longitude}"));
+          "${dotenv.env['API_URL']}/taxis/popular?lat=35.095335&long=33.930475"));
+
+      // final response = await http.get(Uri.parse(
+      //     "${dotenv.env['API_URL']}/taxis/popular?/lat=${widget.position.latitude}&longitude=${widget.position.longitude}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;

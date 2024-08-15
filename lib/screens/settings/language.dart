@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/app.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/widgets/appbar.dart';
+import 'package:kibtaxi/app.dart';
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/widgets/appbar.dart';
 
 class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
   String? _currentLanguage;

@@ -1,10 +1,10 @@
 {
   "finding_location": "Konumunuz bulunuyor",
-  "location_services_disabled": "Konum hizmetleri devre dışı. CypruxTaxi uygulamasını kullanmak için lütfen konum hizmetlerini etkinleştiriniz.",
+  "location_services_disabled": "Konum hizmetleri devre dışı. KıbTaxi uygulamasını kullanmak için lütfen konum hizmetlerini etkinleştiriniz.",
   "enable_location_services": "Konum Hizmetlerini Etkinleştir",
   "location_permissions_denied" : "Konum izinleri devre dışı bırakıldı.",
   "allow_location_permissions": "Konum Erişimine İzin Ver",
-  "location_permissions_permanently_denied": "Bu uygulamada konum izinleri kalıcı olarak devre dışı bırakıldı. Lütfen konum ayarlarınızı açın ve CypruxTaxi'ye konum erişim izinlerini verin.",
+  "location_permissions_permanently_denied": "Bu uygulamada konum izinleri kalıcı olarak devre dışı bırakıldı. Lütfen konum ayarlarınızı açın ve KıbTaxi'ye konum erişim izinlerini verin.",
   "open_location_settings": "Konum Ayalarını Aç",
   "getting_most_popular": "En popüler taksiler bulunuyor",
   "most_populars": "En popüler taksiler, {city}",

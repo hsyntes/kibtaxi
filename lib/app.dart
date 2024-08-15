@@ -6,14 +6,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/models/theme.dart';
-import 'package:mobile/screens/bookmark.dart';
-import 'package:mobile/screens/home.dart';
-import 'package:mobile/themes/dark.dart';
-import 'package:mobile/themes/light.dart';
 import "package:http/http.dart" as http;
-import 'package:mobile/widgets/bottom_navigation.dart';
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/models/theme.dart';
+import 'package:kibtaxi/screens/bookmark.dart';
+import 'package:kibtaxi/screens/home.dart';
+import 'package:kibtaxi/themes/dark.dart';
+import 'package:kibtaxi/themes/light.dart';
+import 'package:kibtaxi/widgets/bottom_navigation.dart';
 import 'package:provider/provider.dart';
 
 class _MyAppState extends State<MyApp>
@@ -154,7 +154,7 @@ class _MyAppState extends State<MyApp>
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
-      title: "Cyprux Taxi",
+      title: "KıbTaxi",
       theme: LightThemeData.theme,
       darkTheme: DarkThemeData.theme,
       themeMode: themeProvider.themeMode,

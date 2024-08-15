@@ -16,6 +16,8 @@ class LightThemeData {
           unselectedItemColor: Colors.black54,
           showSelectedLabels: false,
           showUnselectedLabels: false,
+          enableFeedback: false,
+          elevation: 0,
         ),
       );
 }

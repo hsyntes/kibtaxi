@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mobile/app_localization.dart';
-import 'package:mobile/models/bookmark.dart';
-import 'package:mobile/screens/profile.dart';
-import 'package:mobile/widgets/appbar.dart';
+import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/models/bookmark.dart';
+import 'package:kibtaxi/screens/profile.dart';
+import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +19,10 @@ class BookmarkScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: MyAppBar(
+        leading: Icon(
+          Icons.bookmark,
+          color: Theme.of(context).colorScheme.primary,
+        ),
         title: Text(
           AppLocalizations.of(context)!.translate("my_taxis"),
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

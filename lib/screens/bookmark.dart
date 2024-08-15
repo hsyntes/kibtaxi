@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/models/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
+import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -291,13 +292,8 @@ class BookmarkScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             TextButton(
-                              onPressed: () async {
-                                await launchUrl(
-                                  Uri(
-                                    scheme: "tel",
-                                    path: taxi['taxi_phone'],
-                                  ),
-                                );
+                              onPressed: () {
+                                makePhoneCall(context, taxi['taxi_phone']);
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.blueAccent,

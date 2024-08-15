@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/models/bookmark.dart';
+import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -221,13 +222,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ElevatedButton(
-                              onPressed: () async {
-                                await launchUrl(
-                                  Uri(
-                                    scheme: "tel",
-                                    path: taxi['taxi_phone'],
-                                  ),
-                                );
+                              onPressed: () {
+                                makePhoneCall(context, taxi['taxi_phone']);
                               },
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.blueAccent,

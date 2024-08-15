@@ -11,6 +11,7 @@ import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/models/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/screens/settings/settings.dart';
+import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -522,13 +523,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children: [
                                           Expanded(
                                             child: TextButton(
-                                              onPressed: () async {
-                                                await launchUrl(
-                                                  Uri(
-                                                    scheme: "tel",
-                                                    path: taxi['taxi_phone'],
-                                                  ),
-                                                );
+                                              onPressed: () {
+                                                makePhoneCall(context,
+                                                    taxi['taxi_phone']);
                                               },
                                               style: TextButton.styleFrom(
                                                 foregroundColor:
@@ -838,13 +835,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     TextButton(
-                                      onPressed: () async {
-                                        await launchUrl(
-                                          Uri(
-                                            scheme: "tel",
-                                            path: taxi['taxi_phone'],
-                                          ),
-                                        );
+                                      onPressed: () {
+                                        makePhoneCall(
+                                            context, taxi['taxi_phone']);
                                       },
                                       style: TextButton.styleFrom(
                                         foregroundColor: Colors.blueAccent,

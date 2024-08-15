@@ -19,5 +19,10 @@ class LightThemeData {
           enableFeedback: false,
           elevation: 0,
         ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: Colors.white,
+          contentTextStyle: TextStyle(color: Colors.black),
+          actionTextColor: Color(0xFFFFA500),
+        ),
       );
 }

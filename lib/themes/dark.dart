@@ -31,5 +31,10 @@ class DarkThemeData {
         hoverColor: Color(0xFF081017),
         focusColor: Color(0xFF081017),
         highlightColor: Color(0xFF081017),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: Color(0xFF081017),
+          contentTextStyle: TextStyle(color: Colors.white),
+          actionTextColor: Color(0xFFFFA500),
+        ),
       );
 }

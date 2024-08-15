@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,7 +28,7 @@ class _MyAppState extends State<MyApp>
   Future<void> _checkApiHealth() async {
     try {
       final response = await http.get(
-        Uri.parse("http://35.158.120.154:8000/api"),
+        Uri.parse("${dotenv.env['API_URL']}"),
       );
 
       print("Connection to the server status: ${response.statusCode}");

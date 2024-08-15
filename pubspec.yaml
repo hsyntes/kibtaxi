@@ -47,6 +47,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.19.0
+  flutter_dotenv: ^5.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -81,6 +82,7 @@ flutter:
     - assets/icons/brand.dark.png
     - assets/icons/app_icon.png
     - assets/lang/
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

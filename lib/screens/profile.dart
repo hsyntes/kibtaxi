@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,8 +18,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<dynamic> _getTaxi() async {
     try {
-      final response = await http.get(
-          Uri.parse("http://35.158.120.154:8000/api/taxis/id/${widget.id}"));
+      final response = await http
+          .get(Uri.parse("${dotenv.env['API_URL']}/taxis/id/${widget.id}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;

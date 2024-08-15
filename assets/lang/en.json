@@ -25,5 +25,6 @@
   "remove_all": "Remove All",
   "want_to_remove_all": "Are you sure that you want to remove all your saved taxis?",
   "yes": "Yes",
-  "nothing_to_show": "There is nothing to show here."
+  "nothing_to_show": "There is nothing to show here.",
+  "outside_country": "Our application has been developed for use in the Turkish Republic of Northern Cyprus only."
 }

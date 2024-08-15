@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mobile/app_localization.dart';
@@ -48,9 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _getCity() async {
     try {
-      // List<Placemark> placemark =
-      //     await placemarkFromCoordinates(35.332001, 33.318963);
-
       List<Placemark> placemark = await placemarkFromCoordinates(
           widget.position.latitude, widget.position.longitude);
 
@@ -78,8 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<dynamic> _getPopularTaxis() async {
     try {
+      // final response = await http.get(Uri.parse(
+      //     "${dotenv.env['API_URL']}/taxis/popular?lat=35.095335&long=33.930475"));
+
       final response = await http.get(Uri.parse(
-          "http://35.158.120.154:8000/api/taxis/popular?lat=35.095335&long=33.930475"));
+          "${dotenv.env['API_URL']}/taxis/popular?/lat=${widget.position.latitude}&longitude=${widget.position.longitude}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final response = await http.get(
         Uri.parse(
-          'http://35.158.120.154:8000/api/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit',
+          "${dotenv.env['API_URL']}/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit",
         ),
       );
 
@@ -854,6 +855,38 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
+                  ),
+                ),
+              ],
+            );
+          }
+
+          if (!snapshot.hasData) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wrong_location,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      "TRNC",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+                SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.translate("outside_country"),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],

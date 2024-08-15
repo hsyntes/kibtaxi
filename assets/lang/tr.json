@@ -25,5 +25,6 @@
   "remove_all": "Tümünü Kaldır",
   "want_to_remove_all": "Kaydedilen tüm taksilerinizi kaldırmak istediğinizden emin misiniz?",
   "yes": "Evet",
-  "nothing_to_show": "Burada gösterilecek bir şey yok."
+  "nothing_to_show": "Burada gösterilecek bir şey yok.",
+  "outside_country": "Uygulamamız yalnızca Kuzey Kıbrıs Türk Cumhuriyeti'nde kullanılmak üzere geliştirilmiştir."
 }

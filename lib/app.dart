@@ -229,20 +229,6 @@ class _MyAppState extends State<MyApp>
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .2,
-                    height: MediaQuery.of(context).size.height * .3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/icons/app_icon.png",
-                          fit: BoxFit.contain,
-                        )
-                      ],
-                    ),
-                  )
                 ],
               );
             }
@@ -305,7 +291,7 @@ class _MyAppState extends State<MyApp>
                       width: MediaQuery.of(context).size.width * .2,
                       height: MediaQuery.of(context).size.height * .2,
                       child: Image.asset(
-                        "assets/icons/app_icon.png",
+                        "assets/icons/app.png",
                         fit: BoxFit.contain,
                       ),
                     )
@@ -361,7 +347,7 @@ class _MyAppState extends State<MyApp>
                       width: MediaQuery.of(context).size.width * .2,
                       height: MediaQuery.of(context).size.height * .2,
                       child: Image.asset(
-                        "assets/icons/app_icon.png",
+                        "assets/icons/app.png",
                         fit: BoxFit.contain,
                       ),
                     )
@@ -424,7 +410,7 @@ class _MyAppState extends State<MyApp>
                       width: MediaQuery.of(context).size.width * .2,
                       height: MediaQuery.of(context).size.height * .2,
                       child: Image.asset(
-                        "assets/icons/app_icon.png",
+                        "assets/icons/app.png",
                         fit: BoxFit.contain,
                       ),
                     )

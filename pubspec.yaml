@@ -64,18 +64,27 @@ flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: 'assets/icons/app_icon.png'
+  image_path: 'assets/icons/app.png'
 
 flutter_native_splash:
+  image: assets/icons/splash.png
+  image_dark: assets/icons/splash.light.png
   color: "#FFFFFF"
   color_dark: "#040D12"
+  android: true
+  ios: true
+  android_12:
+    image: assets/icons/splash.png
+    image_dark: assets/icons/splash.light.png
+    color: "#FFFFFF"
+    color_dark: "#040D12"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+flutter_lints: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -83,9 +92,12 @@ flutter_native_splash:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/icons/app.png
+    - assets/icons/app.light.png
     - assets/icons/brand.light.png
     - assets/icons/brand.dark.png
-    - assets/icons/app_icon.png
+    - assets/icons/splash.png
+    - assets/icons/splash.light.png
     - assets/lang/
     - .env
 

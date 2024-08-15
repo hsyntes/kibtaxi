@@ -154,7 +154,7 @@ class _MyAppState extends State<MyApp>
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
-      title: "KıbTaxi",
+      title: "Kıbtaxi",
       theme: LightThemeData.theme,
       darkTheme: DarkThemeData.theme,
       themeMode: themeProvider.themeMode,
@@ -249,10 +249,9 @@ class _MyAppState extends State<MyApp>
                         children: [
                           Icon(
                             Icons.location_off,
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 42,
                           ),
-                          SizedBox(height: 8),
                           Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
@@ -265,7 +264,6 @@ class _MyAppState extends State<MyApp>
                               ),
                             ),
                           ),
-                          SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () async {
                               await Geolocator.openLocationSettings();
@@ -288,10 +286,12 @@ class _MyAppState extends State<MyApp>
                       ),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * .2,
+                      width: MediaQuery.of(context).size.width * .5,
                       height: MediaQuery.of(context).size.height * .2,
                       child: Image.asset(
-                        "assets/icons/app.png",
+                        Theme.of(context).brightness == Brightness.dark
+                            ? "assets/icons/splash.light.png"
+                            : "assets/icons/splash.png",
                         fit: BoxFit.contain,
                       ),
                     )
@@ -312,10 +312,10 @@ class _MyAppState extends State<MyApp>
                         children: [
                           Icon(
                             Icons.location_off,
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 42,
                           ),
-                          SizedBox(height: 8),
+                          // SizedBox(height: 8),
                           Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
@@ -328,7 +328,7 @@ class _MyAppState extends State<MyApp>
                               ),
                             ),
                           ),
-                          SizedBox(height: 16),
+                          // SizedBox(height: 8),
                           ElevatedButton(
                             onPressed: () async {
                               setState(() {
@@ -344,10 +344,12 @@ class _MyAppState extends State<MyApp>
                       ),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * .2,
+                      width: MediaQuery.of(context).size.width * .5,
                       height: MediaQuery.of(context).size.height * .2,
                       child: Image.asset(
-                        "assets/icons/app.png",
+                        Theme.of(context).brightness == Brightness.dark
+                            ? "assets/icons/splash.light.png"
+                            : "assets/icons/app.png",
                         fit: BoxFit.contain,
                       ),
                     )
@@ -368,10 +370,9 @@ class _MyAppState extends State<MyApp>
                         children: [
                           Icon(
                             Icons.location_off,
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 42,
                           ),
-                          SizedBox(height: 8),
                           Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
@@ -384,7 +385,6 @@ class _MyAppState extends State<MyApp>
                               ),
                             ),
                           ),
-                          SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () async {
                               await Geolocator.openLocationSettings();
@@ -407,10 +407,12 @@ class _MyAppState extends State<MyApp>
                       ),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * .2,
+                      width: MediaQuery.of(context).size.width * .5,
                       height: MediaQuery.of(context).size.height * .2,
                       child: Image.asset(
-                        "assets/icons/app.png",
+                        Theme.of(context).brightness == Brightness.dark
+                            ? "assets/icons/splash.light.png"
+                            : 'assets/icons/splash.png',
                         fit: BoxFit.contain,
                       ),
                     )

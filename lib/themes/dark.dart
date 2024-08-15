@@ -11,7 +11,7 @@ class DarkThemeData {
           scrolledUnderElevation: 0,
         ),
         scaffoldBackgroundColor: Color(0xFF030a0e),
-        cardTheme: CardTheme(color: Color(0xFF040D12)),
+        cardTheme: CardTheme(color: Color(0xFF081017)),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFF030a0e),
           selectedItemColor: Color(0xFFFFA500),
@@ -20,6 +20,7 @@ class DarkThemeData {
           showUnselectedLabels: false,
           enableFeedback: false,
           elevation: 0,
+          type: BottomNavigationBarType.fixed,
         ),
         dialogTheme: DialogTheme(
           backgroundColor: Color(0xFF030a0e),
@@ -27,5 +28,8 @@ class DarkThemeData {
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: Color(0xFF030a0e),
         ),
+        hoverColor: Color(0xFF081017),
+        focusColor: Color(0xFF081017),
+        highlightColor: Color(0xFF081017),
       );
 }

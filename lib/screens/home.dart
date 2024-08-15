@@ -282,9 +282,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         CarouselSlider.builder(
                           itemCount: taxis.length,
                           options: CarouselOptions(
-                            height: MediaQuery.of(context).size.width >= 320
-                                ? MediaQuery.of(context).size.height * .24
-                                : MediaQuery.of(context).size.height * .28,
+                            height: MediaQuery.of(context).size.width > 360
+                                ? MediaQuery.of(context).size.height * .25
+                                : MediaQuery.of(context).size.height * .3,
                             autoPlay: true,
                             autoPlayInterval: Duration(milliseconds: 3500),
                             enlargeCenterPage: true,

@@ -76,6 +76,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Image.network(
                                   taxi['taxi_profile'],
                                   semanticLabel: "Profile Image",
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null)
+                                      return child;
+                                    else
+                                      return Skeletonizer.zone(
+                                        child: Bone.square(
+                                          size: 56,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                      );
+                                  },
                                 ),
                               )
                             : SizedBox(
@@ -328,9 +340,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Image.network(
                               taxi['taxi_photos'][index],
                               loadingBuilder: (context, child, progress) {
-                                if (progress == null) {
+                                if (progress == null)
                                   return child;
-                                } else {
+                                else
                                   return Skeletonizer.zone(
                                     child: Padding(
                                       padding: EdgeInsets.all(8),
@@ -339,7 +351,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                   );
-                                }
                               },
                             ),
                           ),

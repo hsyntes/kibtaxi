@@ -8,6 +8,7 @@ import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BookmarkScreen extends StatelessWidget {

@@ -166,11 +166,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: MyAppBar(
-        title: Image.asset(
-          Theme.of(context).brightness == Brightness.dark
-              ? 'assets/icons/brand.light.png'
-              : 'assets/icons/brand.dark.png',
-          height: 32,
+        title: GestureDetector(
+          child: Image.asset(
+            Theme.of(context).brightness == Brightness.dark
+                ? 'assets/icons/brand.light.png'
+                : 'assets/icons/brand.dark.png',
+            height: 32,
+          ),
+          onTap: () {
+            _scrollController.animateTo(0.0,
+                duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+          },
         ),
         actions: [
           // IconButton(
@@ -320,8 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemCount: taxis.length,
                             options: CarouselOptions(
                               height: MediaQuery.of(context).size.width > 360
-                                  ? MediaQuery.of(context).size.height * .25
-                                  : MediaQuery.of(context).size.height * .3,
+                                  ? MediaQuery.of(context).size.height * .28
+                                  : MediaQuery.of(context).size.height * .34,
                               autoPlay: true,
                               autoPlayInterval: Duration(milliseconds: 3500),
                               enlargeCenterPage: true,
@@ -341,11 +347,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                               child: Image.network(
                                                 taxi['taxi_profile'],
                                                 semanticLabel: "Profile Image",
+                                                loadingBuilder:
+                                                    (context, child, progress) {
+                                                  if (progress == null)
+                                                    return child;
+                                                  else
+                                                    return Skeletonizer.zone(
+                                                      child: Bone.square(
+                                                        size: 56,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(16),
+                                                      ),
+                                                    );
+                                                },
                                               ),
                                             )
                                           : SizedBox(
-                                              width: 72,
-                                              height: 72,
+                                              width: 56,
+                                              height: 56,
                                               child: CircleAvatar(),
                                             ),
                                       title: Text(
@@ -680,6 +700,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                           width: 40,
                                           height: 40,
                                           semanticLabel: "Profile Image",
+                                          loadingBuilder:
+                                              (context, child, progress) {
+                                            if (progress == null)
+                                              return child;
+                                            else
+                                              return Skeletonizer.zone(
+                                                child: Bone.square(
+                                                  size: 40,
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                ),
+                                              );
+                                          },
                                         ),
                                       )
                                     : CircleAvatar(),

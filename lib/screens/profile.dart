@@ -142,37 +142,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               "${taxi['taxi_address']}",
                               style: TextStyle(fontSize: 12),
                             ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Text(
-                                  "${taxi['taxi_popularity']}",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                                SizedBox(width: 3),
-                                RatingBar.builder(
-                                  updateOnDrag: false,
-                                  itemCount: 5,
-                                  itemSize: 14,
-                                  allowHalfRating: true,
-                                  ignoreGestures: true,
-                                  initialRating: taxi['taxi_popularity'],
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  unratedColor: Theme.of(context).brightness ==
+                            SizedBox(height: 4),
+                            Tooltip(
+                              message: AppLocalizations.of(context)!
+                                  .translate("rating_score_google_maps"),
+                              textStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context).brightness ==
                                           Brightness.dark
-                                      ? Colors.white24
-                                      : Colors.black26,
-                                  onRatingUpdate: (rating) {},
-                                ),
-                              ],
-                            ),
+                                      ? Colors.white
+                                      : Colors.black),
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).colorScheme.brightness ==
+                                            Brightness.dark
+                                        ? Color(0xFF030a0e)
+                                        : Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              showDuration: Duration(milliseconds: 2500),
+                              triggerMode: TooltipTriggerMode.tap,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "${taxi['taxi_popularity']}",
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  SizedBox(width: 3),
+                                  RatingBar.builder(
+                                    updateOnDrag: false,
+                                    itemCount: 5,
+                                    itemSize: 16,
+                                    allowHalfRating: true,
+                                    ignoreGestures: true,
+                                    initialRating:
+                                        taxi['taxi_popularity'].toDouble(),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    unratedColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.white24
+                                            : Colors.black26,
+                                    onRatingUpdate: (rating) {},
+                                  ),
+                                  SizedBox(width: 3),
+                                  Icon(
+                                    Icons.info,
+                                    size: 16,
+                                    // color: Colors.blueAccent,
+                                  )
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         trailing: IconButton(

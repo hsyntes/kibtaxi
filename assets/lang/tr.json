@@ -28,5 +28,6 @@
   "nothing_to_show": "Burada gösterilecek bir şey yok.",
   "outside_country": "Uygulamamız yalnızca Kuzey Kıbrıs Türk Cumhuriyeti'nde kullanılmak üzere geliştirilmiştir.",
   "phone_denied": "Bu aramayı yapabilmek için telefon görüşmesi iznine ihtiyacınız var.",
-  "phone_permanently_denied": "İzin kalıcı olarak reddedildi, lütfen uygulama ayarlarından etkinleştirin."
+  "phone_permanently_denied": "İzin kalıcı olarak reddedildi, lütfen uygulama ayarlarından etkinleştirin.",
+  "rating_score_google_maps": "Google Haritalar'daki puanı"
 }

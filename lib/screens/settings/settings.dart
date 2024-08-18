@@ -7,7 +7,7 @@ import 'package:kibtaxi/widgets/appbar.dart';
 Route _createThemeSettingsRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
-        ThemeSettingsScreen(),
+        const ThemeSettingsScreen(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
@@ -28,7 +28,7 @@ Route _createThemeSettingsRoute() {
 Route _createLanguageSettings() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
-        LanguageSettingsScreen(),
+        const LanguageSettingsScreen(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
@@ -55,7 +55,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: MyAppBar(
         title: Text(
           AppLocalizations.of(context)!.translate("settings"),
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       body: ListView(
@@ -64,14 +64,14 @@ class SettingsScreen extends StatelessWidget {
             title: Text(
               AppLocalizations.of(context)!.translate("theme"),
             ),
-            trailing: Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               Navigator.of(context).push(_createThemeSettingsRoute());
             },
           ),
           ListTile(
             title: Text(AppLocalizations.of(context)!.translate("language")),
-            trailing: Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               Navigator.of(context).push(_createLanguageSettings());
             },

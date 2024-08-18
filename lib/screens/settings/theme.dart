@@ -15,7 +15,7 @@ class ThemeSettingsScreen extends StatelessWidget {
       appBar: MyAppBar(
         title: Text(
           AppLocalizations.of(context)!.translate("theme_settings"),
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(

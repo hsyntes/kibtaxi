@@ -4,7 +4,7 @@ import 'package:kibtaxi/widgets/searchbar.dart';
 class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: MySearchBar(),

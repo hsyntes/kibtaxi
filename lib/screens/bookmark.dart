@@ -161,12 +161,10 @@ class BookmarkScreen extends StatelessWidget {
                           ),
                         ),
                         trailing: IconButton(
-                          icon: Icon(bookmarkProvider.isBookmarked(taxi)
-                              ? Icons.bookmark
-                              : Icons.bookmark_outline),
+                          icon: Icon(Icons.bookmark),
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white54
-                              : Colors.black54,
+                              ? Colors.white
+                              : Colors.black,
                           onPressed: () async {
                             if (bookmarkProvider.isBookmarked(taxi)) {
                               await bookmarkProvider.removeBookmark(taxi);
@@ -256,16 +254,17 @@ class BookmarkScreen extends StatelessWidget {
                               message: AppLocalizations.of(context)!
                                   .translate("rating_score_google_maps"),
                               textStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black),
+                                fontSize: 14,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                               decoration: BoxDecoration(
                                 color:
                                     Theme.of(context).colorScheme.brightness ==
                                             Brightness.dark
-                                        ? Color(0xFF030a0e)
+                                        ? Colors.black
                                         : Colors.white,
                                 borderRadius: BorderRadius.circular(16),
                               ),

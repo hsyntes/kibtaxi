@@ -147,16 +147,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               message: AppLocalizations.of(context)!
                                   .translate("rating_score_google_maps"),
                               textStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black),
+                                fontSize: 14,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                               decoration: BoxDecoration(
                                 color:
                                     Theme.of(context).colorScheme.brightness ==
                                             Brightness.dark
-                                        ? Color(0xFF030a0e)
+                                        ? Colors.black
                                         : Colors.white,
                                 borderRadius: BorderRadius.circular(16),
                               ),
@@ -247,8 +248,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             bookmarkProvider.isBookmarked(taxi)
                                 ? Icons.bookmark
                                 : Icons.bookmark_outline,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
+                            color: bookmarkProvider.isBookmarked(taxi)
+                                ? Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black
+                                : Theme.of(context).brightness ==
+                                        Brightness.dark
                                     ? Colors.white54
                                     : Colors.black54,
                           ),

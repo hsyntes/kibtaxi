@@ -31,5 +31,6 @@
   "phone_permanently_denied": "The permission is permanently denied, please enable it in the app settings.",
   "rating_score_google_maps": "The rating score on Google Maps",
   "near_taxis_error": "We couldn't find any taxis near you. Try to change your location to one of our popular locations.",
-  "in_trnc": "Are you in TRNC?"
+  "in_trnc": "Are you in TRNC?",
+  "change_location": "Change Location"
 }

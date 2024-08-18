@@ -463,7 +463,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           );
                         },
-                        child: Text("Change Location"),
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .translate("change_location"),
+                        ),
                       )
                     ],
                   )
@@ -737,10 +740,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                             bookmarkProvider.isBookmarked(taxi)
                                                 ? Icons.bookmark
                                                 : Icons.bookmark_outline),
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.white54
-                                            : Colors.black54,
+                                        color: bookmarkProvider
+                                                .isBookmarked(taxi)
+                                            ? Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black
+                                            : Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white54
+                                                : Colors.black54,
                                         onPressed: () async {
                                           if (bookmarkProvider
                                               .isBookmarked(taxi)) {
@@ -854,7 +863,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           .colorScheme
                                                           .brightness ==
                                                       Brightness.dark
-                                                  ? Color(0xFF030a0e)
+                                                  ? Colors.black
                                                   : Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(16),
@@ -1117,10 +1126,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   icon: Icon(bookmarkProvider.isBookmarked(taxi)
                                       ? Icons.bookmark
                                       : Icons.bookmark_outline),
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white54
-                                      : Colors.black54,
+                                  color: bookmarkProvider.isBookmarked(taxi)
+                                      ? Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black
+                                      : Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white54
+                                          : Colors.black54,
                                   onPressed: () async {
                                     if (bookmarkProvider.isBookmarked(taxi)) {
                                       await bookmarkProvider
@@ -1229,7 +1243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     .colorScheme
                                                     .brightness ==
                                                 Brightness.dark
-                                            ? Color(0xFF030a0e)
+                                            ? Colors.black
                                             : Colors.white,
                                         borderRadius: BorderRadius.circular(16),
                                       ),

@@ -30,5 +30,6 @@
   "phone_denied": "Bu aramayı yapabilmek için telefon görüşmesi iznine ihtiyacınız var.",
   "phone_permanently_denied": "İzin kalıcı olarak reddedildi, lütfen uygulama ayarlarından etkinleştirin.",
   "rating_score_google_maps": "Google Haritalar'daki puanı",
-  "near_taxis_error": "Yakınınızda taksi bulamadık. Konumunuzu popüler konumlarımızdan biriyle değiştirebilirsiniz."
+  "near_taxis_error": "Yakınınızda taksi bulamadık. Konumunuzu popüler konumlarımızdan biriyle değiştirebilirsiniz.",
+  "in_trnc": "KKTC'de misiniz?"
 }

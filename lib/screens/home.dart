@@ -165,8 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
-          !_isTaxisLoading &&
-          _hasMore) {
+          !_isTaxisLoading) {
         _getTaxis();
       }
     });
@@ -175,8 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
-
-    print("City: $_city");
 
     return Scaffold(
       appBar: MyAppBar(
@@ -280,179 +277,195 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.location_on,
                         color: Theme.of(context).colorScheme.primary,
+                        size: 32,
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        "TRNC",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                      SizedBox(height: 4),
+                      Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.translate("in_trnc"),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
                       )
                     ],
                   ),
-                  SizedBox(height: 12),
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .translate("near_taxis_error"),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        showDragHandle: true,
-                        enableDrag: true,
-                        context: context,
-                        builder: (context) {
-                          return SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.2009463,
-                                        longitude: 33.334945,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                  SizedBox(height: 8),
+                  Column(
+                    children: [
+                      Center(
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .translate("near_taxis_error"),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      TextButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            showDragHandle: true,
+                            enableDrag: true,
+                            context: context,
+                            builder: (context) {
+                              return SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.25,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.2009463,
+                                            longitude: 33.334945,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Lefkoşa (Nicosia)"),
                                       ),
-                                    ),
-                                    child: Text("Lefkoşa (Nicosia)"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.095335,
-                                        longitude: 33.930475,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.095335,
+                                            longitude: 33.930475,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Gazimağusa (Famagusta)"),
                                       ),
-                                    ),
-                                    child: Text("Gazimağusa (Famagusta)"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.332305,
-                                        longitude: 33.319577,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.332305,
+                                            longitude: 33.319577,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Girne (Kyrenia)"),
                                       ),
-                                    ),
-                                    child: Text("Girne (Kyrenia)"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.345549,
-                                        longitude: 33.161444,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.345549,
+                                            longitude: 33.161444,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Lapta"),
                                       ),
-                                    ),
-                                    child: Text("Lapta"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.198005,
-                                        longitude: 32.993815,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.198005,
+                                            longitude: 32.993815,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Güzelyurt (Morphou)"),
                                       ),
-                                    ),
-                                    child: Text("Güzelyurt (Morphou)"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.113689,
-                                        longitude: 32.849653,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.113689,
+                                            longitude: 32.849653,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Lefke"),
                                       ),
-                                    ),
-                                    child: Text("Lefke"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                        latitude: 35.286091,
-                                        longitude: 33.892211,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                            latitude: 35.286091,
+                                            longitude: 33.892211,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("İskele"),
                                       ),
-                                    ),
-                                    child: Text("İskele"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      changePosition(
-                                          latitude: 35.598727,
-                                          longitude: 34.380792);
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                        Colors.white,
+                                      TextButton(
+                                        onPressed: () {
+                                          changePosition(
+                                              latitude: 35.598727,
+                                              longitude: 34.380792);
+                                          Navigator.pop(context);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                        ),
+                                        child: Text("Dipkarpaz"),
                                       ),
-                                    ),
-                                    child: Text("Dipkarpaz"),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    child: Text("Change Location"),
+                        child: Text("Change Location"),
+                      )
+                    ],
                   )
                 ],
               );
@@ -464,7 +477,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return CustomScrollView(
                 controller: _scrollController,
-                // physics: ClampingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
@@ -518,11 +530,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child:
                                                     Text("Lefkoşa (Nicosia)"),
@@ -535,11 +549,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child: Text(
                                                     "Gazimağusa (Famagusta)"),
@@ -552,11 +568,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child: Text("Girne (Kyrenia)"),
                                               ),
@@ -568,11 +586,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child: Text("Lapta"),
                                               ),
@@ -584,11 +604,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child:
                                                     Text("Güzelyurt (Morphou)"),
@@ -601,11 +623,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child: Text("Lefke"),
                                               ),
@@ -617,11 +641,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   );
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child: Text("İskele"),
                                               ),
@@ -632,11 +658,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       longitude: 34.380792);
                                                   Navigator.pop(context);
                                                 },
-                                                style: ButtonStyle(
+                                                style: TextButton.styleFrom(
                                                   foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Colors.white,
-                                                  ),
+                                                      Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                 ),
                                                 child: Text("Dipkarpaz"),
                                               ),

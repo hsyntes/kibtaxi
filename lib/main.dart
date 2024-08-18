@@ -2,8 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:provider/provider.dart";
 import "app.dart";
-import "models/bookmark.dart";
-import "models/theme.dart";
+import "providers/bookmark.dart";
+import "providers/theme.dart";
 
 void main() async {
   await dotenv.load(fileName: ".env");

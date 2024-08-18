@@ -3,12 +3,11 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kibtaxi/app_localization.dart';
-import 'package:kibtaxi/models/bookmark.dart';
+import 'package:kibtaxi/providers/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BookmarkScreen extends StatelessWidget {

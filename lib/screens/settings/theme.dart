@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibtaxi/app_localization.dart';
-import 'package:kibtaxi/models/theme.dart';
+import 'package:kibtaxi/providers/theme.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 

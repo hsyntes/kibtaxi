@@ -8,7 +8,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import "package:http/http.dart" as http;
 import "package:geocoding/geocoding.dart";
 import 'package:kibtaxi/app_localization.dart';
-import 'package:kibtaxi/models/bookmark.dart';
+import 'package:kibtaxi/providers/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/screens/settings/settings.dart';
 import 'package:kibtaxi/utils/helpers.dart';
@@ -40,6 +40,7 @@ Route _createSettingsRoute() {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  late Map<String, dynamic> position = {"latitude": null, "longitude": null};
   final List<dynamic> _taxis = [];
   Future<dynamic>? _popularTaxis;
   bool _isTaxisLoading = false;
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _getCity() async {
     try {
       List<Placemark> placemark = await placemarkFromCoordinates(
-          widget.position.latitude, widget.position.longitude);
+          position['latitude'], position['longitude']);
 
       String? city;
 
@@ -78,10 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<dynamic> _getPopularTaxis() async {
     try {
       final response = await http.get(Uri.parse(
-          "${dotenv.env['API_URL']}/taxis/popular?lat=35.095335&long=33.930475"));
-
-      // final response = await http.get(Uri.parse(
-      //     "${dotenv.env['API_URL']}/taxis/popular?/lat=${widget.position.latitude}&longitude=${widget.position.longitude}"));
+          "${dotenv.env['API_URL']}/taxis/popular?lat=${position['latitude']}&long=${position['longitude']}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -97,12 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      // final latitude = widget.position.latitude;
-      // final longitude = widget.position.longitude;
-
       final response = await http.get(
         Uri.parse(
-          "${dotenv.env['API_URL']}/taxis?lat=35.095335&long=33.930475&page=$_currentPage&limit=$_limit",
+          "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&page=$_currentPage&limit=$_limit",
         ),
       );
 
@@ -129,6 +124,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void changePosition({required double latitude, required double longitude}) {
+    setState(() {
+      position = {
+        "latitude": latitude,
+        "longitude": longitude,
+      };
+
+      _popularTaxis = _getPopularTaxis();
+      _getTaxis();
+      _getCity();
+    });
+  }
+
   Future<void> _initialize() async {
     await _getCity();
 
@@ -148,6 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    position['latitude'] = widget.position.latitude;
+    position['longitude'] = widget.position.longitude;
+
     _initialize();
 
     _scrollController.addListener(() {
@@ -163,6 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
+
+    print("City: $_city");
 
     return Scaffold(
       appBar: MyAppBar(
@@ -259,7 +273,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ); // Provide error details
             }
 
-            if (!snapshot.hasData || snapshot.data.isEmpty) {
+            if (!snapshot.hasData ||
+                snapshot.data.isEmpty ||
+                snapshot.data['data']['taxis'].length == 0) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -269,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.wrong_location,
+                        Icons.location_on,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(width: 6),
@@ -284,10 +300,160 @@ class _HomeScreenState extends State<HomeScreen> {
                   Center(
                     child: Text(
                       AppLocalizations.of(context)!
-                          .translate("outside_country"),
+                          .translate("near_taxis_error"),
                       textAlign: TextAlign.center,
                     ),
                   ),
+                  SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        showDragHandle: true,
+                        enableDrag: true,
+                        context: context,
+                        builder: (context) {
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.25,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.2009463,
+                                        longitude: 33.334945,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Lefkoşa (Nicosia)"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.095335,
+                                        longitude: 33.930475,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Gazimağusa (Famagusta)"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.332305,
+                                        longitude: 33.319577,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Girne (Kyrenia)"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.345549,
+                                        longitude: 33.161444,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Lapta"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.198005,
+                                        longitude: 32.993815,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Güzelyurt (Morphou)"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.113689,
+                                        longitude: 32.849653,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Lefke"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                        latitude: 35.286091,
+                                        longitude: 33.892211,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("İskele"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      changePosition(
+                                          latitude: 35.598727,
+                                          longitude: 34.380792);
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                    child: Text("Dipkarpaz"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Text("Change Location"),
+                  )
                 ],
               );
             }
@@ -302,23 +468,187 @@ class _HomeScreenState extends State<HomeScreen> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.only(left: 16, right: 16),
                       child: Column(
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Icon(
-                                Icons.rocket_launch,
-                                size: 18,
-                                color: Theme.of(context).colorScheme.primary,
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.rocket_launch,
+                                    size: 18,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    AppLocalizations.of(context)!.translate(
+                                        'most_populars',
+                                        params: {'city': "$_city"}),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.clip,
+                                    softWrap: true,
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 6),
-                              Text(
-                                AppLocalizations.of(context)!.translate(
-                                    'most_populars',
-                                    params: {'city': "$_city"}),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
+                              TextButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    showDragHandle: true,
+                                    enableDrag: true,
+                                    context: context,
+                                    builder: (context) {
+                                      return SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.25,
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            children: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.2009463,
+                                                    longitude: 33.334945,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child:
+                                                    Text("Lefkoşa (Nicosia)"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.095335,
+                                                    longitude: 33.930475,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                    "Gazimağusa (Famagusta)"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.332305,
+                                                    longitude: 33.319577,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child: Text("Girne (Kyrenia)"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.345549,
+                                                    longitude: 33.161444,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child: Text("Lapta"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.198005,
+                                                    longitude: 32.993815,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child:
+                                                    Text("Güzelyurt (Morphou)"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.113689,
+                                                    longitude: 32.849653,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child: Text("Lefke"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                    latitude: 35.286091,
+                                                    longitude: 33.892211,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child: Text("İskele"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  changePosition(
+                                                      latitude: 35.598727,
+                                                      longitude: 34.380792);
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                                child: Text("Dipkarpaz"),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text("Change"),
+                              ),
                             ],
                           ),
                           SizedBox(height: 6),
@@ -1025,7 +1355,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class HomeScreen extends StatefulWidget {
   final position;
 
-  const HomeScreen({this.position, super.key});
+  const HomeScreen({required this.position, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

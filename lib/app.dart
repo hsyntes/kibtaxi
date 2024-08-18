@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import "package:http/http.dart" as http;
 import 'package:kibtaxi/app_localization.dart';
-import 'package:kibtaxi/models/theme.dart';
+import 'package:kibtaxi/providers/theme.dart';
 import 'package:kibtaxi/screens/bookmark.dart';
 import 'package:kibtaxi/screens/home.dart';
 import 'package:kibtaxi/themes/dark.dart';
@@ -107,8 +106,8 @@ class _MyAppState extends State<MyApp>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.paused && _position == null) {
-      _handleLocationPermission();
+    if (state == AppLifecycleState.paused) {
+      if (_position == null) _handleLocationPermission();
     }
   }
 

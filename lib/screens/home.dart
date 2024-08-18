@@ -20,7 +20,8 @@ import "package:fluttertoast/fluttertoast.dart";
 
 Route _createSettingsRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => SettingsScreen(),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        const SettingsScreen(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
@@ -117,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
         throw Exception("Failed fetching data.");
       }
     } catch (e) {
+      throw Exception(e);
     } finally {
       setState(() {
         _isTaxisLoading = false;
@@ -186,7 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onTap: () {
             _scrollController.animateTo(0.0,
-                duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeOut);
           },
         ),
         actions: [
@@ -212,17 +215,17 @@ class _HomeScreenState extends State<HomeScreen> {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
                         Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 12,
                               height: 12,
                               child: CircularProgressIndicator(strokeWidth: 1),
                             ),
-                            SizedBox(width: 6),
+                            const SizedBox(width: 6),
                             Text(
                               AppLocalizations.of(context)!
                                   .translate("getting_most_popular"),
@@ -243,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   delegate: SliverChildBuilderDelegate(
                     childCount: 10,
                     (context, index) {
-                      return Padding(
+                      return const Padding(
                         padding: EdgeInsets.only(right: 16, left: 16),
                         child: Skeletonizer.zone(
                           child: ListTile(
@@ -286,17 +289,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Theme.of(context).colorScheme.primary,
                         size: 32,
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Center(
                         child: Text(
                           AppLocalizations.of(context)!.translate("in_trnc"),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       )
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Column(
                     children: [
                       Center(
@@ -306,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       TextButton(
                         onPressed: () {
                           showModalBottomSheet(
@@ -336,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Lefkoşa (Nicosia)"),
+                                        child: const Text("Lefkoşa (Nicosia)"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -353,7 +356,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Gazimağusa (Famagusta)"),
+                                        child: const Text(
+                                            "Gazimağusa (Famagusta)"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -370,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Girne (Kyrenia)"),
+                                        child: const Text("Girne (Kyrenia)"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -387,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Lapta"),
+                                        child: const Text("Lapta"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -404,7 +408,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Güzelyurt (Morphou)"),
+                                        child:
+                                            const Text("Güzelyurt (Morphou)"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -421,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Lefke"),
+                                        child: const Text("Lefke"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -438,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("İskele"),
+                                        child: const Text("İskele"),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -454,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                         ),
-                                        child: Text("Dipkarpaz"),
+                                        child: const Text("Dipkarpaz"),
                                       ),
                                     ],
                                   ),
@@ -483,7 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16),
+                      padding: const EdgeInsets.only(left: 16, right: 16),
                       child: Column(
                         children: [
                           Row(
@@ -497,13 +502,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                   ),
-                                  SizedBox(width: 6),
+                                  const SizedBox(width: 6),
                                   Text(
                                     AppLocalizations.of(context)!.translate(
                                         'most_populars',
                                         params: {'city': "$_city"}),
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                     overflow: TextOverflow.clip,
                                     softWrap: true,
                                   ),
@@ -541,8 +546,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child:
-                                                    Text("Lefkoşa (Nicosia)"),
+                                                child: const Text(
+                                                    "Lefkoşa (Nicosia)"),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -560,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child: Text(
+                                                child: const Text(
                                                     "Gazimağusa (Famagusta)"),
                                               ),
                                               TextButton(
@@ -579,7 +584,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child: Text("Girne (Kyrenia)"),
+                                                child: const Text(
+                                                    "Girne (Kyrenia)"),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -597,7 +603,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child: Text("Lapta"),
+                                                child: const Text("Lapta"),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -615,8 +621,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child:
-                                                    Text("Güzelyurt (Morphou)"),
+                                                child: const Text(
+                                                    "Güzelyurt (Morphou)"),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -634,7 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child: Text("Lefke"),
+                                                child: const Text("Lefke"),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -652,7 +658,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child: Text("İskele"),
+                                                child: const Text("İskele"),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -669,7 +675,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white
                                                           : Colors.black,
                                                 ),
-                                                child: Text("Dipkarpaz"),
+                                                child: const Text("Dipkarpaz"),
                                               ),
                                             ],
                                           ),
@@ -678,11 +684,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   );
                                 },
-                                child: Text("Change"),
+                                child: const Text("Change"),
                               ),
                             ],
                           ),
-                          SizedBox(height: 6),
+                          const SizedBox(height: 6),
                           CarouselSlider.builder(
                             itemCount: taxis.length,
                             options: CarouselOptions(
@@ -690,7 +696,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? MediaQuery.of(context).size.height * .28
                                   : MediaQuery.of(context).size.height * .34,
                               autoPlay: true,
-                              autoPlayInterval: Duration(milliseconds: 3500),
+                              autoPlayInterval:
+                                  const Duration(milliseconds: 3500),
                               enlargeCenterPage: true,
                               enableInfiniteScroll: false,
                               initialPage: 0,
@@ -710,9 +717,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 semanticLabel: "Profile Image",
                                                 loadingBuilder:
                                                     (context, child, progress) {
-                                                  if (progress == null)
+                                                  if (progress == null) {
                                                     return child;
-                                                  else
+                                                  } else {
                                                     return Skeletonizer.zone(
                                                       child: Bone.square(
                                                         size: 56,
@@ -721,17 +728,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .circular(16),
                                                       ),
                                                     );
+                                                  }
                                                 },
                                               ),
                                             )
-                                          : SizedBox(
+                                          : const SizedBox(
                                               width: 56,
                                               height: 56,
                                               child: CircleAvatar(),
                                             ),
                                       title: Text(
                                         taxi['taxi_name'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -812,7 +820,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               fontSize: 12,
                                             ),
                                           ),
-                                          SizedBox(height: 8),
+                                          const SizedBox(height: 8),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -826,7 +834,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ? Colors.white54
                                                     : Colors.black54,
                                               ),
-                                              SizedBox(width: 2),
+                                              const SizedBox(width: 2),
                                               Text(
                                                 "${taxi['taxi_city']}",
                                                 style: TextStyle(
@@ -840,12 +848,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               )
                                             ],
                                           ),
-                                          SizedBox(height: 4),
+                                          const SizedBox(height: 4),
                                           Text(
                                             "${taxi['taxi_address']}",
-                                            style: TextStyle(fontSize: 12),
+                                            style:
+                                                const TextStyle(fontSize: 12),
                                           ),
-                                          SizedBox(height: 4),
+                                          const SizedBox(height: 4),
                                           Tooltip(
                                             message: AppLocalizations.of(
                                                     context)!
@@ -868,8 +877,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(16),
                                             ),
-                                            showDuration:
-                                                Duration(milliseconds: 2500),
+                                            showDuration: const Duration(
+                                                milliseconds: 2500),
                                             triggerMode: TooltipTriggerMode.tap,
                                             child: Row(
                                               children: [
@@ -881,7 +890,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .primary,
                                                   ),
                                                 ),
-                                                SizedBox(width: 3),
+                                                const SizedBox(width: 3),
                                                 RatingBar.builder(
                                                   updateOnDrag: false,
                                                   itemCount: 5,
@@ -906,8 +915,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           : Colors.black26,
                                                   onRatingUpdate: (rating) {},
                                                 ),
-                                                SizedBox(width: 3),
-                                                Icon(
+                                                const SizedBox(width: 3),
+                                                const Icon(
                                                   Icons.info,
                                                   size: 16,
                                                   // color: Colors.blueAccent,
@@ -950,7 +959,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               style: TextButton.styleFrom(
                                                 foregroundColor:
                                                     Colors.blueAccent,
-                                                shape: RoundedRectangleBorder(
+                                                shape:
+                                                    const RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     bottomLeft:
@@ -963,11 +973,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.phone,
                                                     size: 18,
                                                   ),
-                                                  SizedBox(width: 6),
+                                                  const SizedBox(width: 6),
                                                   Text(
                                                     AppLocalizations.of(
                                                             context)!
@@ -994,7 +1004,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               },
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.green,
-                                                shape: RoundedRectangleBorder(
+                                                shape:
+                                                    const RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     bottomRight:
@@ -1003,7 +1014,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 elevation: 0,
                                               ),
-                                              child: Row(
+                                              child: const Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
@@ -1032,7 +1043,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
                           Row(
@@ -1042,11 +1053,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 size: 18,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              SizedBox(width: 6),
+                              const SizedBox(width: 6),
                               Text(
                                 AppLocalizations.of(context)!
                                     .translate("others_around"),
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -1059,7 +1071,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       childCount: _taxis.length + (_isTaxisLoading ? 1 : 0),
                       (context, index) {
                         if (index == _taxis.length) {
-                          return Padding(
+                          return const Padding(
                             padding: EdgeInsets.all(16),
                             child: Center(
                               child: SizedBox(
@@ -1086,10 +1098,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
-                          focusColor: Color(0xFF141d21),
-                          hoverColor: Color(0xFF141d21),
-                          // overlayColor:
-                          //     MaterialStateProperty.all(Color(0xFF141d21)),
                           child: Column(
                             children: [
                               ListTile(
@@ -1102,9 +1110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           semanticLabel: "Profile Image",
                                           loadingBuilder:
                                               (context, child, progress) {
-                                            if (progress == null)
+                                            if (progress == null) {
                                               return child;
-                                            else
+                                            } else {
                                               return Skeletonizer.zone(
                                                 child: Bone.square(
                                                   size: 40,
@@ -1112,13 +1120,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       BorderRadius.circular(16),
                                                 ),
                                               );
+                                            }
                                           },
                                         ),
                                       )
-                                    : CircleAvatar(),
+                                    : const CircleAvatar(),
                                 title: Text(
                                   taxi['taxi_name'],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -1193,7 +1202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontSize: 12,
                                       ),
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
@@ -1208,7 +1217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ? Colors.white54
                                               : Colors.black54,
                                         ),
-                                        SizedBox(width: 2),
+                                        const SizedBox(width: 2),
                                         Text(
                                           "${taxi['taxi_city']}",
                                           style: TextStyle(
@@ -1222,12 +1231,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         )
                                       ],
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Text(
                                       "${taxi['taxi_address']}",
-                                      style: TextStyle(fontSize: 12),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Tooltip(
                                       message: AppLocalizations.of(context)!
                                           .translate(
@@ -1248,7 +1257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         borderRadius: BorderRadius.circular(16),
                                       ),
                                       showDuration:
-                                          Duration(milliseconds: 2500),
+                                          const Duration(milliseconds: 2500),
                                       triggerMode: TooltipTriggerMode.tap,
                                       child: Row(
                                         children: [
@@ -1260,7 +1269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .primary,
                                             ),
                                           ),
-                                          SizedBox(width: 3),
+                                          const SizedBox(width: 3),
                                           RatingBar.builder(
                                             updateOnDrag: false,
                                             itemCount: 5,
@@ -1283,8 +1292,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     : Colors.black26,
                                             onRatingUpdate: (rating) {},
                                           ),
-                                          SizedBox(width: 3),
-                                          Icon(
+                                          const SizedBox(width: 3),
+                                          const Icon(
                                             Icons.info,
                                             size: 16,
                                             // color: Colors.blueAccent,
@@ -1297,7 +1306,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 isThreeLine: true,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 16, right: 16),
+                                padding:
+                                    const EdgeInsets.only(left: 16, right: 16),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
@@ -1315,11 +1325,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.phone,
                                             size: 18,
                                           ),
-                                          SizedBox(width: 6),
+                                          const SizedBox(width: 6),
                                           Text(
                                             AppLocalizations.of(context)!
                                                 .translate('phone'),
@@ -1344,7 +1354,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         foregroundColor: Colors.green,
                                         elevation: 0,
                                       ),
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
@@ -1361,9 +1371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               if (index < taxi.length - 1)
-                                SizedBox(
-                                  height: 16,
-                                )
+                                const SizedBox(height: 16)
                             ],
                           ),
                         );
@@ -1374,7 +1382,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
 
-            return Center(
+            return const Center(
               child: Text("Something went wrong."),
             );
           }
@@ -1395,7 +1403,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class HomeScreen extends StatefulWidget {
-  final position;
+  final dynamic position;
 
   const HomeScreen({required this.position, super.key});
 

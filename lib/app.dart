@@ -30,8 +30,6 @@ class _MyAppState extends State<MyApp>
         Uri.parse("${dotenv.env['API_URL']}"),
       );
 
-      print("Connection to the server status: ${response.statusCode}");
-
       if (response.statusCode == 200) {
         print("Connection to the server is successful.");
       }

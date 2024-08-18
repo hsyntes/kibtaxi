@@ -44,14 +44,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: MyAppBar(
         title: Text(
           widget.appBarTitle,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       body: FutureBuilder<dynamic>(
         future: _taxi,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Skeletonizer.zone(
+            return const Skeletonizer.zone(
               child: ListTile(
                 leading: Bone.circle(size: 48),
                 title: Bone.text(words: 2),
@@ -77,9 +77,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   taxi['taxi_profile'],
                                   semanticLabel: "Profile Image",
                                   loadingBuilder: (context, child, progress) {
-                                    if (progress == null)
+                                    if (progress == null) {
                                       return child;
-                                    else
+                                    } else {
                                       return Skeletonizer.zone(
                                         child: Bone.square(
                                           size: 56,
@@ -87,10 +87,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               BorderRadius.circular(16),
                                         ),
                                       );
+                                    }
                                   },
                                 ),
                               )
-                            : SizedBox(
+                            : const SizedBox(
                                 width: 56,
                                 height: 56,
                                 child: CircleAvatar(),
@@ -109,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontSize: 12,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -122,9 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ? Colors.white54
                                       : Colors.black54,
                                 ),
-                                SizedBox(
-                                  width: 2,
-                                ),
+                                const SizedBox(width: 2),
                                 Text(
                                   "${taxi['taxi_city']}",
                                   style: TextStyle(
@@ -137,12 +136,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 )
                               ],
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               "${taxi['taxi_address']}",
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Tooltip(
                               message: AppLocalizations.of(context)!
                                   .translate("rating_score_google_maps"),
@@ -161,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         : Colors.white,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              showDuration: Duration(milliseconds: 2500),
+                              showDuration: const Duration(milliseconds: 2500),
                               triggerMode: TooltipTriggerMode.tap,
                               child: Row(
                                 children: [
@@ -172,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
-                                  SizedBox(width: 3),
+                                  const SizedBox(width: 3),
                                   RatingBar.builder(
                                     updateOnDrag: false,
                                     itemCount: 5,
@@ -193,8 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             : Colors.black26,
                                     onRatingUpdate: (rating) {},
                                   ),
-                                  SizedBox(width: 3),
-                                  Icon(
+                                  const SizedBox(width: 3),
+                                  const Icon(
                                     Icons.info,
                                     size: 16,
                                     // color: Colors.blueAccent,
@@ -261,9 +260,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         isThreeLine: true,
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Padding(
-                        padding: EdgeInsets.only(right: 16, left: 16),
+                        padding: const EdgeInsets.only(right: 16, left: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -279,11 +278,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.phone,
                                     size: 18,
                                   ),
-                                  SizedBox(width: 6),
+                                  const SizedBox(width: 6),
                                   Text(
                                     AppLocalizations.of(context)!
                                         .translate('phone'),
@@ -308,7 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 foregroundColor: Colors.green,
                                 elevation: 0,
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
@@ -326,11 +325,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: 16)),
+                const SliverToBoxAdapter(child: SizedBox(height: 16)),
                 SliverPadding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       // crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
@@ -374,17 +374,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Image.network(
                               taxi['taxi_photos'][index],
                               loadingBuilder: (context, child, progress) {
-                                if (progress == null)
+                                if (progress == null) {
                                   return child;
-                                else
+                                } else {
                                   return Skeletonizer.zone(
                                     child: Padding(
-                                      padding: EdgeInsets.all(8),
+                                      padding: const EdgeInsets.all(8),
                                       child: Bone.square(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
                                   );
+                                }
                               },
                             ),
                           ),
@@ -397,7 +398,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
-          return Text("");
+          return const Text("");
         },
       ),
     );
@@ -405,8 +406,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class ProfileScreen extends StatefulWidget {
-  final appBarTitle;
-  final id;
+  final String appBarTitle;
+  final String id;
   const ProfileScreen({required this.id, required this.appBarTitle, super.key});
 
   @override

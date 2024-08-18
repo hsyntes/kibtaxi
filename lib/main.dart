@@ -14,7 +14,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => BookmarkProvider())
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }

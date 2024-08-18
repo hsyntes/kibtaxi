@@ -14,7 +14,7 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
       appBar: MyAppBar(
         title: Text(
           AppLocalizations.of(context)!.translate("language_settings"),
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -26,7 +26,7 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
             selected: _currentLanguage == 'en',
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (value) {
-              Locale locale = Locale('en');
+              Locale locale = const Locale('en');
               MyApp.of(context)?.setLocale(locale);
 
               _currentLanguage = value;
@@ -39,7 +39,7 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
             selected: _currentLanguage == 'tr',
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (value) {
-              Locale locale = Locale('tr');
+              Locale locale = const Locale('tr');
               MyApp.of(context)?.setLocale(locale);
 
               _currentLanguage = value;

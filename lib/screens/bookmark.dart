@@ -26,9 +26,9 @@ class BookmarkScreen extends StatelessWidget {
         ),
         title: Text(
           AppLocalizations.of(context)!.translate("my_taxis"),
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: taxis.length != 0
+        actions: taxis.isNotEmpty
             ? [
                 IconButton(
                     onPressed: () {
@@ -51,14 +51,14 @@ class BookmarkScreen extends StatelessWidget {
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          insetPadding: EdgeInsets.all(4),
+                                          insetPadding: const EdgeInsets.all(4),
                                           title: Row(
                                             children: [
-                                              Icon(
+                                              const Icon(
                                                 Icons.bookmark,
                                                 size: 14,
                                               ),
-                                              SizedBox(width: 4),
+                                              const SizedBox(width: 4),
                                               Text(AppLocalizations.of(context)!
                                                   .translate("remove_all"))
                                             ],
@@ -95,7 +95,7 @@ class BookmarkScreen extends StatelessWidget {
                                               child: Text(
                                                 AppLocalizations.of(context)!
                                                     .translate("yes"),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.red,
@@ -110,7 +110,7 @@ class BookmarkScreen extends StatelessWidget {
                                   child: Text(
                                     AppLocalizations.of(context)!
                                         .translate("remove_all"),
-                                    style: TextStyle(color: Colors.red),
+                                    style: const TextStyle(color: Colors.red),
                                   ),
                                 ),
                               ],
@@ -119,11 +119,11 @@ class BookmarkScreen extends StatelessWidget {
                         },
                       );
                     },
-                    icon: Icon(Icons.menu))
+                    icon: const Icon(Icons.menu))
               ]
             : null,
       ),
-      body: taxis.length != 0
+      body: taxis.isNotEmpty
           ? ListView.builder(
               itemCount: taxis.length,
               itemBuilder: (context, index) {
@@ -153,15 +153,15 @@ class BookmarkScreen extends StatelessWidget {
                                   semanticLabel: "Profile Image",
                                 ),
                               )
-                            : CircleAvatar(),
+                            : const CircleAvatar(),
                         title: Text(
                           taxi['taxi_name'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         trailing: IconButton(
-                          icon: Icon(Icons.bookmark),
+                          icon: const Icon(Icons.bookmark),
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Colors.white
                               : Colors.black,
@@ -218,7 +218,7 @@ class BookmarkScreen extends StatelessWidget {
                                 fontSize: 12,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -231,7 +231,7 @@ class BookmarkScreen extends StatelessWidget {
                                       ? Colors.white54
                                       : Colors.black54,
                                 ),
-                                SizedBox(width: 2),
+                                const SizedBox(width: 2),
                                 Text(
                                   "${taxi['taxi_city']}",
                                   style: TextStyle(
@@ -244,12 +244,12 @@ class BookmarkScreen extends StatelessWidget {
                                 )
                               ],
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               "${taxi['taxi_address']}",
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Tooltip(
                               message: AppLocalizations.of(context)!
                                   .translate("rating_score_google_maps"),
@@ -268,7 +268,7 @@ class BookmarkScreen extends StatelessWidget {
                                         : Colors.white,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              showDuration: Duration(milliseconds: 2500),
+                              showDuration: const Duration(milliseconds: 2500),
                               triggerMode: TooltipTriggerMode.tap,
                               child: Row(
                                 children: [
@@ -279,7 +279,7 @@ class BookmarkScreen extends StatelessWidget {
                                           Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
-                                  SizedBox(width: 3),
+                                  const SizedBox(width: 3),
                                   RatingBar.builder(
                                     updateOnDrag: false,
                                     itemCount: 5,
@@ -300,8 +300,8 @@ class BookmarkScreen extends StatelessWidget {
                                             : Colors.black26,
                                     onRatingUpdate: (rating) {},
                                   ),
-                                  SizedBox(width: 3),
-                                  Icon(
+                                  const SizedBox(width: 3),
+                                  const Icon(
                                     Icons.info,
                                     size: 16,
                                     // color: Colors.blueAccent,
@@ -314,7 +314,7 @@ class BookmarkScreen extends StatelessWidget {
                         isThreeLine: true,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
+                        padding: const EdgeInsets.only(left: 16, right: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -329,11 +329,11 @@ class BookmarkScreen extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.phone,
                                     size: 18,
                                   ),
-                                  SizedBox(width: 6),
+                                  const SizedBox(width: 6),
                                   Text(
                                     AppLocalizations.of(context)!
                                         .translate('phone'),
@@ -358,7 +358,7 @@ class BookmarkScreen extends StatelessWidget {
                                 foregroundColor: Colors.green,
                                 elevation: 0,
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
@@ -374,7 +374,7 @@ class BookmarkScreen extends StatelessWidget {
                         ),
                       ),
                       if (index < taxi.length - 1)
-                        SizedBox(
+                        const SizedBox(
                           height: 16,
                         )
                     ],

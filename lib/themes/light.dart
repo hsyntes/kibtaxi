@@ -6,7 +6,7 @@ class LightThemeData {
           primary: Color(0xFFFFA500),
           brightness: Brightness.light,
         ),
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           scrolledUnderElevation: 0.5,
           shadowColor: Colors.black54,
@@ -19,7 +19,7 @@ class LightThemeData {
           enableFeedback: false,
           elevation: 0,
         ),
-        snackBarTheme: SnackBarThemeData(
+        snackBarTheme: const SnackBarThemeData(
           backgroundColor: Colors.white,
           contentTextStyle: TextStyle(color: Colors.black),
           actionTextColor: Color(0xFFFFA500),

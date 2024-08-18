@@ -6,12 +6,12 @@ class DarkThemeData {
           primary: Color(0xFFFFA500),
           brightness: Brightness.dark,
         ),
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF030a0e),
           scrolledUnderElevation: 0,
         ),
-        scaffoldBackgroundColor: Color(0xFF030a0e),
-        cardTheme: CardTheme(color: Color(0xFF081017)),
+        scaffoldBackgroundColor: const Color(0xFF030a0e),
+        cardTheme: const CardTheme(color: Color(0xFF081017)),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFF030a0e),
           selectedItemColor: Color(0xFFFFA500),
@@ -22,16 +22,16 @@ class DarkThemeData {
           elevation: 0,
           type: BottomNavigationBarType.fixed,
         ),
-        dialogTheme: DialogTheme(
+        dialogTheme: const DialogTheme(
           backgroundColor: Color(0xFF030a0e),
         ),
-        bottomSheetTheme: BottomSheetThemeData(
+        bottomSheetTheme: const BottomSheetThemeData(
           backgroundColor: Color(0xFF030a0e),
         ),
-        hoverColor: Color(0xFF081017),
-        focusColor: Color(0xFF081017),
-        highlightColor: Color(0xFF081017),
-        snackBarTheme: SnackBarThemeData(
+        hoverColor: const Color(0xFF081017),
+        focusColor: const Color(0xFF081017),
+        highlightColor: const Color(0xFF081017),
+        snackBarTheme: const SnackBarThemeData(
           backgroundColor: Color(0xFF081017),
           contentTextStyle: TextStyle(color: Colors.white),
           actionTextColor: Color(0xFFFFA500),

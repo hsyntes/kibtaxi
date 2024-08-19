@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/providers/theme.dart';
+import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 
@@ -52,6 +53,7 @@ class ThemeSettingsScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: const BannerAdWidget(),
     );
   }
 }

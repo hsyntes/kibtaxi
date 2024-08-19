@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/screens/settings/language.dart';
 import 'package:kibtaxi/screens/settings/theme.dart';
+import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 
 Route _createThemeSettingsRoute() {
@@ -78,6 +79,7 @@ class SettingsScreen extends StatelessWidget {
           )
         ],
       ),
+      bottomNavigationBar: const BannerAdWidget(),
     );
   }
 }

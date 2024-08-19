@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.telephony" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:label="Kibtaxi"
         android:name="${applicationName}"

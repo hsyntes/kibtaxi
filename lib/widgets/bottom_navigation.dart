@@ -13,26 +13,15 @@ class MyBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      items: [
+      items: const [
         BottomNavigationBarItem(
-            icon: currentIndex == 0
-                ? const Icon(Icons.home)
-                : const Icon(Icons.home_outlined),
-            label: "Home"),
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.search),
-        //   label: "Search",
-        // ),
-        // BottomNavigationBarItem(
-        //   icon: currentIndex == 2
-        //       ? Icon(Icons.location_on)
-        //       : const Icon(Icons.location_on_outlined),
-        //   label: "Taxi Map",
-        // ),
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: "Home",
+        ),
         BottomNavigationBarItem(
-          icon: currentIndex == 1
-              ? const Icon(Icons.bookmark)
-              : const Icon(Icons.bookmark_outline),
+          icon: Icon(Icons.bookmark_outline),
+          activeIcon: Icon(Icons.bookmark),
           label: "Saved Taxis",
         )
       ],

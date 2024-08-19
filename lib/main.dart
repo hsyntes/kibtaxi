@@ -7,10 +7,10 @@ import "providers/bookmark.dart";
 import "providers/theme.dart";
 
 void main() async {
-  await dotenv.load(fileName: ".env");
-
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+
+  await dotenv.load(fileName: ".env");
+  await MobileAds.instance.initialize();
 
   runApp(
     MultiProvider(

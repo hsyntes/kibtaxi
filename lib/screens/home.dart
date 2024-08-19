@@ -98,6 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
+      await Future.delayed(const Duration(milliseconds: 5000));
+
       final response = await http.get(
         Uri.parse(
           "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&page=$_currentPage&limit=$_limit",
@@ -162,10 +164,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    _interstitialAds.loadAd();
-
-    position['latitude'] = widget.position.latitude;
-    position['longitude'] = widget.position.longitude;
+    position = {
+      "latitude": widget.position.latitude,
+      "longitude": widget.position.longitude,
+    };
 
     _initialize();
 
@@ -308,10 +310,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     children: [
                       Center(
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .translate("near_taxis_error"),
-                          textAlign: TextAlign.center,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16),
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .translate("near_taxis_error"),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -689,7 +694,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   );
                                 },
-                                child: const Text("Change"),
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .translate('change'),
+                                ),
                               ),
                             ],
                           ),
@@ -1055,6 +1063,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: BannerAdWidget(),
+                    ),
+                  ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -1084,7 +1098,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     delegate: SliverChildBuilderDelegate(
                       childCount: _taxis.length + (_isTaxisLoading ? 1 : 0),
                       (context, index) {
-                        if (index == _taxis.length) {
+                        if (_isTaxisLoading && index == _taxis.length) {
                           return const Padding(
                             padding: EdgeInsets.all(16),
                             child: Center(
@@ -1100,142 +1114,123 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         final taxi = _taxis[index];
 
-                        return InkWell(
-                          onTap: () {
-                            _interstitialAds.showAd(onAdClosed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(
-                                    id: taxi['_id'],
-                                    appBarTitle: taxi['taxi_name'],
-                                  ),
-                                ),
-                              );
-                            });
-                          },
-                          child: Column(
-                            children: [
-                              ListTile(
-                                leading: taxi['taxi_profile'] != null
-                                    ? ClipOval(
-                                        child: Image.network(
-                                          taxi['taxi_profile'],
-                                          width: 40,
-                                          height: 40,
-                                          semanticLabel: "Profile Image",
-                                          loadingBuilder:
-                                              (context, child, progress) {
-                                            if (progress == null) {
-                                              return child;
-                                            } else {
-                                              return Skeletonizer.zone(
-                                                child: Bone.square(
-                                                  size: 40,
-                                                  borderRadius:
-                                                      BorderRadius.circular(16),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      )
-                                    : const CircleAvatar(),
-                                title: Text(
-                                  taxi['taxi_name'],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                trailing: IconButton(
-                                  icon: Icon(bookmarkProvider.isBookmarked(taxi)
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline),
-                                  color: bookmarkProvider.isBookmarked(taxi)
-                                      ? Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black
-                                      : Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white54
-                                          : Colors.black54,
-                                  onPressed: () async {
-                                    if (bookmarkProvider.isBookmarked(taxi)) {
-                                      await bookmarkProvider
-                                          .removeBookmark(taxi);
-
-                                      Fluttertoast.showToast(
-                                        msg: AppLocalizations.of(context)!
-                                            .translate("taxi_removed"),
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        textColor:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.white
-                                                : Colors.black,
-                                        backgroundColor:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.black
-                                                : Colors.white,
-                                      );
-                                    } else {
-                                      await bookmarkProvider.setBookmark(taxi);
-
-                                      Fluttertoast.showToast(
-                                        msg: AppLocalizations.of(context)!
-                                            .translate("taxi_added"),
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        textColor:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.white
-                                                : Colors.black,
-                                        backgroundColor:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.black
-                                                : Colors.white,
-                                      );
-                                    }
-                                  },
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "@${taxi['taxi_username']}",
-                                      style: TextStyle(
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.white54
-                                            : Colors.black54,
-                                        fontSize: 12,
+                        return Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                _interstitialAds.showAd(onAdClosed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileScreen(
+                                        id: taxi['_id'],
+                                        appBarTitle: taxi['taxi_name'],
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Icon(
-                                          Icons.location_on,
-                                          size: 16,
-                                          color: Theme.of(context).brightness ==
+                                  );
+                                });
+                              },
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    leading: taxi['taxi_profile'] != null
+                                        ? ClipOval(
+                                            child: Image.network(
+                                              taxi['taxi_profile'],
+                                              width: 40,
+                                              height: 40,
+                                              semanticLabel: "Profile Image",
+                                              loadingBuilder:
+                                                  (context, child, progress) {
+                                                if (progress == null) {
+                                                  return child;
+                                                } else {
+                                                  return Skeletonizer.zone(
+                                                    child: Bone.square(
+                                                      size: 40,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              16),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          )
+                                        : const CircleAvatar(),
+                                    title: Text(
+                                      taxi['taxi_name'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    trailing: IconButton(
+                                      icon: Icon(
+                                          bookmarkProvider.isBookmarked(taxi)
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_outline),
+                                      color: bookmarkProvider.isBookmarked(taxi)
+                                          ? Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : Colors.black
+                                          : Theme.of(context).brightness ==
                                                   Brightness.dark
                                               ? Colors.white54
                                               : Colors.black54,
-                                        ),
-                                        const SizedBox(width: 2),
+                                      onPressed: () async {
+                                        if (bookmarkProvider
+                                            .isBookmarked(taxi)) {
+                                          await bookmarkProvider
+                                              .removeBookmark(taxi);
+
+                                          Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .translate("taxi_removed"),
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            textColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            backgroundColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                          );
+                                        } else {
+                                          await bookmarkProvider
+                                              .setBookmark(taxi);
+
+                                          Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .translate("taxi_added"),
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            textColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            backgroundColor:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                          "${taxi['taxi_city']}",
+                                          "@${taxi['taxi_username']}",
                                           style: TextStyle(
                                             color:
                                                 Theme.of(context).brightness ==
@@ -1244,157 +1239,192 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     : Colors.black54,
                                             fontSize: 12,
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "${taxi['taxi_address']}",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Tooltip(
-                                      message: AppLocalizations.of(context)!
-                                          .translate(
-                                              "rating_score_google_maps"),
-                                      textStyle: TextStyle(
-                                          fontSize: 14,
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                                    .colorScheme
-                                                    .brightness ==
-                                                Brightness.dark
-                                            ? Colors.black
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      showDuration:
-                                          const Duration(milliseconds: 2500),
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "${taxi['taxi_popularity']}",
-                                            style: TextStyle(
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              size: 16,
                                               color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white54
+                                                  : Colors.black54,
                                             ),
+                                            const SizedBox(width: 2),
+                                            Text(
+                                              "${taxi['taxi_city']}",
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white54
+                                                    : Colors.black54,
+                                                fontSize: 12,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "${taxi['taxi_address']}",
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Tooltip(
+                                          message: AppLocalizations.of(context)!
+                                              .translate(
+                                                  "rating_score_google_maps"),
+                                          textStyle: TextStyle(
+                                              fontSize: 14,
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                        .colorScheme
+                                                        .brightness ==
+                                                    Brightness.dark
+                                                ? Colors.black
+                                                : Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(16),
                                           ),
-                                          const SizedBox(width: 3),
-                                          RatingBar.builder(
-                                            updateOnDrag: false,
-                                            itemCount: 5,
-                                            itemSize: 16,
-                                            allowHalfRating: true,
-                                            ignoreGestures: true,
-                                            initialRating:
-                                                taxi['taxi_popularity']
-                                                    .toDouble(),
-                                            itemBuilder: (context, _) => Icon(
-                                              Icons.star,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                            ),
-                                            unratedColor:
-                                                Theme.of(context).brightness ==
+                                          showDuration: const Duration(
+                                              milliseconds: 2500),
+                                          triggerMode: TooltipTriggerMode.tap,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                "${taxi['taxi_popularity']}",
+                                                style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 3),
+                                              RatingBar.builder(
+                                                updateOnDrag: false,
+                                                itemCount: 5,
+                                                itemSize: 16,
+                                                allowHalfRating: true,
+                                                ignoreGestures: true,
+                                                initialRating:
+                                                    taxi['taxi_popularity']
+                                                        .toDouble(),
+                                                itemBuilder: (context, _) =>
+                                                    Icon(
+                                                  Icons.star,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                                unratedColor: Theme.of(context)
+                                                            .brightness ==
                                                         Brightness.dark
                                                     ? Colors.white24
                                                     : Colors.black26,
-                                            onRatingUpdate: (rating) {},
+                                                onRatingUpdate: (rating) {},
+                                              ),
+                                              const SizedBox(width: 3),
+                                              const Icon(
+                                                Icons.info,
+                                                size: 16,
+                                                // color: Colors.blueAccent,
+                                              )
+                                            ],
                                           ),
-                                          const SizedBox(width: 3),
-                                          const Icon(
-                                            Icons.info,
-                                            size: 16,
-                                            // color: Colors.blueAccent,
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                isThreeLine: true,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, right: 16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        _interstitialAds.showAd(onAdClosed: () {
-                                          makePhoneCall(
-                                              context, taxi['taxi_phone']);
-                                        });
-                                      },
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.blueAccent,
-                                        elevation: 0,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.phone,
-                                            size: 18,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            AppLocalizations.of(context)!
-                                                .translate('phone'),
-                                          )
-                                        ],
-                                      ),
+                                        )
+                                      ],
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        _interstitialAds.showAd(
-                                            onAdClosed: () async {
-                                          await launchUrl(
-                                            Uri(
-                                              scheme: "https",
-                                              host: "api.whatsapp.com",
-                                              path: "send",
-                                              queryParameters: {
-                                                'phone': taxi['taxi_phone']
-                                              },
-                                            ),
-                                          );
-                                        });
-                                      },
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.green,
-                                        elevation: 0,
-                                      ),
-                                      child: const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            MaterialCommunityIcons.whatsapp,
-                                            size: 18,
+                                    isThreeLine: true,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16, right: 16),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            _interstitialAds.showAd(
+                                                onAdClosed: () {
+                                              makePhoneCall(
+                                                  context, taxi['taxi_phone']);
+                                            });
+                                          },
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.blueAccent,
+                                            elevation: 0,
                                           ),
-                                          SizedBox(width: 6),
-                                          Text("WhatsApp")
-                                        ],
-                                      ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.phone,
+                                                size: 18,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                AppLocalizations.of(context)!
+                                                    .translate('phone'),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            _interstitialAds.showAd(
+                                                onAdClosed: () async {
+                                              await launchUrl(
+                                                Uri(
+                                                  scheme: "https",
+                                                  host: "api.whatsapp.com",
+                                                  path: "send",
+                                                  queryParameters: {
+                                                    'phone': taxi['taxi_phone']
+                                                  },
+                                                ),
+                                              );
+                                            });
+                                          },
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.green,
+                                            elevation: 0,
+                                          ),
+                                          child: const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                MaterialCommunityIcons.whatsapp,
+                                                size: 18,
+                                              ),
+                                              SizedBox(width: 6),
+                                              Text("WhatsApp")
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              if (index < taxi.length - 1)
-                                const SizedBox(height: 16)
-                            ],
-                          ),
+                            ),
+                            if (index !=
+                                (_taxis.length - 1) + (_isTaxisLoading ? 1 : 0))
+                              const SizedBox(height: 16),
+                          ],
                         );
                       },
                     ),

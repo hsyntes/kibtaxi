@@ -17,7 +17,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   @override
   void initState() {
     super.initState();
-    // _interstitialAds.loadAd();
   }
 
   @override
@@ -132,12 +131,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       ),
       body: taxis.isNotEmpty
           ? ListView.builder(
+              physics: const BouncingScrollPhysics(),
               itemCount: taxis.length,
               itemBuilder: (context, index) {
                 final taxi = taxis[index];
 
-                return SingleChildScrollView(
-                    child: Column(
+                return Column(
                   children: [
                     InkWell(
                       onTap: () {
@@ -246,7 +245,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           ? Colors.white54
                                           : Colors.black54,
                                     ),
-                                    const SizedBox(width: 2),
+                                    const SizedBox(width: 1),
                                     Text(
                                       "${taxi['taxi_city']}",
                                       style: TextStyle(
@@ -355,7 +354,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                         Icons.phone,
                                         size: 18,
                                       ),
-                                      const SizedBox(width: 6),
+                                      const SizedBox(width: 4),
                                       Text(
                                         AppLocalizations.of(context)!
                                             .translate('phone'),
@@ -390,7 +389,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                         MaterialCommunityIcons.whatsapp,
                                         size: 18,
                                       ),
-                                      SizedBox(width: 6),
+                                      SizedBox(width: 4),
                                       Text("WhatsApp")
                                     ],
                                   ),
@@ -408,7 +407,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         child: BannerAdWidget(),
                       ),
                   ],
-                ));
+                );
               },
             )
           : Stack(

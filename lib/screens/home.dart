@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -232,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 12,
                               child: CircularProgressIndicator(strokeWidth: 1),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 4),
                             Text(
                               AppLocalizations.of(context)!
                                   .translate("getting_most_popular"),
@@ -494,6 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
               final List<dynamic> taxis = data['data']['taxis'];
 
               return CustomScrollView(
+                physics: const BouncingScrollPhysics(),
                 controller: _scrollController,
                 slivers: [
                   SliverToBoxAdapter(
@@ -512,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                   ),
-                                  const SizedBox(width: 6),
+                                  const SizedBox(width: 4),
                                   Text(
                                     AppLocalizations.of(context)!.translate(
                                         'most_populars',
@@ -701,7 +703,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
                           CarouselSlider.builder(
                             itemCount: taxis.length,
                             options: CarouselOptions(
@@ -847,7 +848,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ? Colors.white54
                                                     : Colors.black54,
                                               ),
-                                              const SizedBox(width: 2),
+                                              const SizedBox(width: 1),
                                               Text(
                                                 "${taxi['taxi_city']}",
                                                 style: TextStyle(
@@ -996,7 +997,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     Icons.phone,
                                                     size: 18,
                                                   ),
-                                                  const SizedBox(width: 6),
+                                                  const SizedBox(width: 4),
                                                   Text(
                                                     AppLocalizations.of(
                                                             context)!
@@ -1045,7 +1046,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .whatsapp,
                                                     size: 18,
                                                   ),
-                                                  SizedBox(width: 6),
+                                                  SizedBox(width: 4),
                                                   Text("WhatsApp")
                                                 ],
                                               ),
@@ -1065,13 +1066,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.only(top: 16),
+                      padding: EdgeInsets.only(top: 32, bottom: 32),
                       child: BannerAdWidget(),
                     ),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.only(left: 16, right: 16),
                       child: Column(
                         children: [
                           Row(
@@ -1081,7 +1082,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 size: 18,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 4),
                               Text(
                                 AppLocalizations.of(context)!
                                     .translate("others_around"),
@@ -1094,6 +1095,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       childCount: _taxis.length + (_isTaxisLoading ? 1 : 0),
@@ -1374,7 +1376,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 Icons.phone,
                                                 size: 18,
                                               ),
-                                              const SizedBox(width: 6),
+                                              const SizedBox(width: 4),
                                               Text(
                                                 AppLocalizations.of(context)!
                                                     .translate('phone'),
@@ -1410,7 +1412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 MaterialCommunityIcons.whatsapp,
                                                 size: 18,
                                               ),
-                                              SizedBox(width: 6),
+                                              SizedBox(width: 4),
                                               Text("WhatsApp")
                                             ],
                                           ),

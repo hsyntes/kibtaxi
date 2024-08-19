@@ -8,7 +8,7 @@ class LightThemeData {
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
-          scrolledUnderElevation: 0.5,
+          scrolledUnderElevation: 0,
           shadowColor: Colors.black54,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(

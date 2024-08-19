@@ -126,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ? Colors.white54
                                       : Colors.black54,
                                 ),
-                                const SizedBox(width: 2),
+                                const SizedBox(width: 1),
                                 Text(
                                   "${taxi['taxi_city']}",
                                   style: TextStyle(
@@ -287,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Icons.phone,
                                     size: 18,
                                   ),
-                                  const SizedBox(width: 6),
+                                  const SizedBox(width: 4),
                                   Text(
                                     AppLocalizations.of(context)!
                                         .translate('phone'),
@@ -321,7 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     MaterialCommunityIcons.whatsapp,
                                     size: 18,
                                   ),
-                                  SizedBox(width: 6),
+                                  SizedBox(width: 4),
                                   Text("WhatsApp")
                                 ],
                               ),

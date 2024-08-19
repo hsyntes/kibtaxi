@@ -11,6 +11,7 @@ import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/providers/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/screens/settings/settings.dart';
+import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,7 @@ Route _createSettingsRoute() {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final InterstitialAds _interstitialAds = InterstitialAds();
   final ScrollController _scrollController = ScrollController();
   late Map<String, dynamic> position = {"latitude": null, "longitude": null};
   final List<dynamic> _taxis = [];
@@ -152,12 +154,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _interstitialAds.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+
+    _interstitialAds.loadAd();
 
     position['latitude'] = widget.position.latitude;
     position['longitude'] = widget.position.longitude;
@@ -928,15 +933,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       isThreeLine: true,
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ProfileScreen(
-                                              id: taxi['_id'],
-                                              appBarTitle: taxi['taxi_name'],
+                                        _interstitialAds.showAd(onAdClosed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileScreen(
+                                                id: taxi['_id'],
+                                                appBarTitle: taxi['taxi_name'],
+                                              ),
                                             ),
-                                          ),
-                                        );
+                                          );
+                                        });
                                       },
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
@@ -953,8 +961,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Expanded(
                                             child: TextButton(
                                               onPressed: () {
-                                                makePhoneCall(context,
-                                                    taxi['taxi_phone']);
+                                                _interstitialAds.showAd(
+                                                    onAdClosed: () {
+                                                  makePhoneCall(context,
+                                                      taxi['taxi_phone']);
+                                                });
                                               },
                                               style: TextButton.styleFrom(
                                                 foregroundColor:
@@ -989,18 +1000,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           Expanded(
                                             child: TextButton(
-                                              onPressed: () async {
-                                                await launchUrl(
-                                                  Uri(
-                                                    scheme: "https",
-                                                    host: "api.whatsapp.com",
-                                                    path: "send",
-                                                    queryParameters: {
-                                                      'phone':
-                                                          taxi['taxi_phone']
-                                                    },
-                                                  ),
-                                                );
+                                              onPressed: () {
+                                                _interstitialAds.showAd(
+                                                    onAdClosed: () async {
+                                                  await launchUrl(
+                                                    Uri(
+                                                      scheme: "https",
+                                                      host: "api.whatsapp.com",
+                                                      path: "send",
+                                                      queryParameters: {
+                                                        'phone':
+                                                            taxi['taxi_phone']
+                                                      },
+                                                    ),
+                                                  );
+                                                });
                                               },
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.green,
@@ -1088,15 +1102,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         return InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfileScreen(
-                                  id: taxi['_id'],
-                                  appBarTitle: taxi['taxi_name'],
+                            _interstitialAds.showAd(onAdClosed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(
+                                    id: taxi['_id'],
+                                    appBarTitle: taxi['taxi_name'],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            });
                           },
                           child: Column(
                             children: [
@@ -1314,8 +1330,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     TextButton(
                                       onPressed: () {
-                                        makePhoneCall(
-                                            context, taxi['taxi_phone']);
+                                        _interstitialAds.showAd(onAdClosed: () {
+                                          makePhoneCall(
+                                              context, taxi['taxi_phone']);
+                                        });
                                       },
                                       style: TextButton.styleFrom(
                                         foregroundColor: Colors.blueAccent,
@@ -1338,17 +1356,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () async {
-                                        await launchUrl(
-                                          Uri(
-                                            scheme: "https",
-                                            host: "api.whatsapp.com",
-                                            path: "send",
-                                            queryParameters: {
-                                              'phone': taxi['taxi_phone']
-                                            },
-                                          ),
-                                        );
+                                      onPressed: () {
+                                        _interstitialAds.showAd(
+                                            onAdClosed: () async {
+                                          await launchUrl(
+                                            Uri(
+                                              scheme: "https",
+                                              host: "api.whatsapp.com",
+                                              path: "send",
+                                              queryParameters: {
+                                                'phone': taxi['taxi_phone']
+                                              },
+                                            ),
+                                          );
+                                        });
                                       },
                                       style: TextButton.styleFrom(
                                         foregroundColor: Colors.green,

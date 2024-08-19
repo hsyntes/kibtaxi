@@ -5,13 +5,20 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/providers/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
+import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BookmarkScreen extends StatelessWidget {
-  const BookmarkScreen({super.key});
+class _BookmarkScreenState extends State<BookmarkScreen> {
+  final InterstitialAds _interstitialAds = InterstitialAds();
+
+  @override
+  void initState() {
+    super.initState();
+    _interstitialAds.loadAd();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,15 +138,17 @@ class BookmarkScreen extends StatelessWidget {
 
                 return InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileScreen(
-                          id: taxi['_id'],
-                          appBarTitle: taxi['taxi_name'],
+                    _interstitialAds.showAd(onAdClosed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            id: taxi['_id'],
+                            appBarTitle: taxi['taxi_name'],
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    });
                   },
                   child: Column(
                     children: [
@@ -320,7 +329,9 @@ class BookmarkScreen extends StatelessWidget {
                           children: [
                             TextButton(
                               onPressed: () {
-                                makePhoneCall(context, taxi['taxi_phone']);
+                                _interstitialAds.showAd(onAdClosed: () {
+                                  makePhoneCall(context, taxi['taxi_phone']);
+                                });
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.blueAccent,
@@ -342,17 +353,19 @@ class BookmarkScreen extends StatelessWidget {
                               ),
                             ),
                             TextButton(
-                              onPressed: () async {
-                                await launchUrl(
-                                  Uri(
-                                    scheme: "https",
-                                    host: "api.whatsapp.com",
-                                    path: "send",
-                                    queryParameters: {
-                                      'phone': taxi['taxi_phone']
-                                    },
-                                  ),
-                                );
+                              onPressed: () {
+                                _interstitialAds.showAd(onAdClosed: () async {
+                                  await launchUrl(
+                                    Uri(
+                                      scheme: "https",
+                                      host: "api.whatsapp.com",
+                                      path: "send",
+                                      queryParameters: {
+                                        'phone': taxi['taxi_phone']
+                                      },
+                                    ),
+                                  );
+                                });
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.green,
@@ -400,4 +413,11 @@ class BookmarkScreen extends StatelessWidget {
             ),
     );
   }
+}
+
+class BookmarkScreen extends StatefulWidget {
+  const BookmarkScreen({super.key});
+
+  @override
+  State<BookmarkScreen> createState() => _BookmarkScreenState();
 }

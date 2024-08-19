@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/providers/bookmark.dart';
+import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/utils/helpers.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final InterstitialAds _interstitialAds = InterstitialAds();
   late Future<dynamic> _taxi;
 
   Future<dynamic> _getTaxi() async {
@@ -34,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _taxi = _getTaxi();
+    _interstitialAds.loadAd();
   }
 
   @override
@@ -268,7 +271,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                makePhoneCall(context, taxi['taxi_phone']);
+                                _interstitialAds.showAd(onAdClosed: () {
+                                  makePhoneCall(context, taxi['taxi_phone']);
+                                });
                               },
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.blueAccent,
@@ -291,17 +296,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () async {
-                                await launchUrl(
-                                  Uri(
-                                    scheme: "https",
-                                    host: "api.whatsapp.com",
-                                    path: "send",
-                                    queryParameters: {
-                                      'phone': taxi['taxi_phone']
-                                    },
-                                  ),
-                                );
+                              onPressed: () {
+                                _interstitialAds.showAd(onAdClosed: () async {
+                                  await launchUrl(
+                                    Uri(
+                                      scheme: "https",
+                                      host: "api.whatsapp.com",
+                                      path: "send",
+                                      queryParameters: {
+                                        'phone': taxi['taxi_phone']
+                                      },
+                                    ),
+                                  );
+                                });
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.green,

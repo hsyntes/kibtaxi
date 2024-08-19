@@ -53,5 +53,7 @@
         <string>We need your location to provide better services.</string>
         <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
         <string>We need your location to provide better services.</string>
+        <key>GADApplicationIdentifier</key>
+        <string>ca-app-pub-################~##########</string>
 	</dict>
 </plist>

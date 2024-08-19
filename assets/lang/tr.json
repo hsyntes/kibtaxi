@@ -32,5 +32,6 @@
   "rating_score_google_maps": "Google Haritalar'daki puanı",
   "near_taxis_error": "Yakınınızda taksi bulamadık. Konumunuzu popüler konumlarımızdan biriyle değiştirebilirsiniz.",
   "in_trnc": "KKTC'de misiniz?",
-  "change_location": "Konumu Değiştir"
+  "change_location": "Konumu Değiştir",
+  "change": "Değiştir"
 }

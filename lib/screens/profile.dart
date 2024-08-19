@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _taxi = _getTaxi();
-    _interstitialAds.loadAd();
+    // _interstitialAds.loadAd();
   }
 
   @override
@@ -388,7 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: Bone.square(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                     ),
                                   );
@@ -408,6 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return const Text("");
         },
       ),
+      bottomNavigationBar: const BannerAdWidget(),
     );
   }
 }

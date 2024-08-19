@@ -14,6 +14,7 @@ import 'package:kibtaxi/themes/dark.dart';
 import 'package:kibtaxi/themes/light.dart';
 import 'package:kibtaxi/widgets/bottom_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _MyAppState extends State<MyApp>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
@@ -24,6 +25,22 @@ class _MyAppState extends State<MyApp>
   AnimationController? _animationController;
   Animation<double>? _animation;
 
+  Future<void> _loadLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    final languageCode = prefs.getString('language_code');
+
+    setState(() {
+      if (languageCode != null && languageCode.isNotEmpty) {
+        _locale = Locale(languageCode);
+      } else {
+        final systemLocale = WidgetsBinding.instance.window.locale;
+        _locale = systemLocale.languageCode == 'tr'
+            ? const Locale('tr')
+            : const Locale('en');
+      }
+    });
+  }
+
   Future<void> _checkApiHealth() async {
     try {
       final response = await http.get(
@@ -31,7 +48,7 @@ class _MyAppState extends State<MyApp>
       );
 
       if (response.statusCode == 200) {
-        print("Connection to the server is successful.");
+        debugPrint("Connection to the server is successful.");
       }
     } catch (e) {
       throw Exception("Connection to the server is failed.");
@@ -114,7 +131,8 @@ class _MyAppState extends State<MyApp>
     super.didChangeDependencies();
     if (_locale == null) {
       Locale locale = WidgetsBinding.instance.window.locale;
-      _locale = locale.languageCode == 'tr' ? Locale('tr') : Locale('en');
+      _locale =
+          locale.languageCode == 'tr' ? const Locale('tr') : const Locale('en');
     }
   }
 
@@ -128,6 +146,8 @@ class _MyAppState extends State<MyApp>
   @override
   void initState() {
     super.initState();
+
+    _loadLocale();
 
     _checkApiHealth();
     _position = _getPosition();
@@ -156,8 +176,8 @@ class _MyAppState extends State<MyApp>
       darkTheme: DarkThemeData.theme,
       themeMode: themeProvider.themeMode,
       locale: _locale,
-      supportedLocales: [Locale('en', ''), Locale('tr', '')],
-      localizationsDelegates: [
+      supportedLocales: const [Locale('en', ''), Locale('tr', '')],
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

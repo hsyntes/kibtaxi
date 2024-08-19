@@ -17,12 +17,13 @@ class LightThemeData {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           enableFeedback: false,
-          elevation: 0,
+          // elevation: 0,
         ),
         snackBarTheme: const SnackBarThemeData(
           backgroundColor: Colors.white,
           contentTextStyle: TextStyle(color: Colors.black),
           actionTextColor: Color(0xFFFFA500),
         ),
+        splashColor: Colors.transparent,
       );
 }

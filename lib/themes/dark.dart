@@ -13,13 +13,12 @@ class DarkThemeData {
         scaffoldBackgroundColor: const Color(0xFF030a0e),
         cardTheme: const CardTheme(color: Color(0xFF081017)),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Color(0xFF030a0e),
+          backgroundColor: Color(0xFF081017),
           selectedItemColor: Color(0xFFFFA500),
           unselectedItemColor: Colors.white54,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           enableFeedback: false,
-          elevation: 0,
           type: BottomNavigationBarType.fixed,
         ),
         dialogTheme: const DialogTheme(
@@ -31,6 +30,7 @@ class DarkThemeData {
         hoverColor: const Color(0xFF081017),
         focusColor: const Color(0xFF081017),
         highlightColor: const Color(0xFF081017),
+        splashColor: Colors.transparent,
         snackBarTheme: const SnackBarThemeData(
           backgroundColor: Color(0xFF081017),
           contentTextStyle: TextStyle(color: Colors.white),

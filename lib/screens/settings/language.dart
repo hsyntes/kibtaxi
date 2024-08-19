@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kibtaxi/app.dart';
 import 'package:kibtaxi/app_localization.dart';
+import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/widgets/appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
   String? _currentLanguage;
@@ -25,9 +27,12 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
             groupValue: _currentLanguage,
             selected: _currentLanguage == 'en',
             activeColor: Theme.of(context).colorScheme.primary,
-            onChanged: (value) {
+            onChanged: (value) async {
               Locale locale = const Locale('en');
               MyApp.of(context)?.setLocale(locale);
+
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setString('language_code', locale.languageCode);
 
               _currentLanguage = value;
             },
@@ -38,15 +43,19 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
             groupValue: _currentLanguage,
             selected: _currentLanguage == 'tr',
             activeColor: Theme.of(context).colorScheme.primary,
-            onChanged: (value) {
+            onChanged: (value) async {
               Locale locale = const Locale('tr');
               MyApp.of(context)?.setLocale(locale);
+
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setString('language_code', locale.languageCode);
 
               _currentLanguage = value;
             },
           ),
         ],
       ),
+      bottomNavigationBar: const BannerAdWidget(),
     );
   }
 }

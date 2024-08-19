@@ -495,7 +495,6 @@ class _HomeScreenState extends State<HomeScreen> {
               final List<dynamic> taxis = data['data']['taxis'];
 
               return CustomScrollView(
-                physics: const BouncingScrollPhysics(),
                 controller: _scrollController,
                 slivers: [
                   SliverToBoxAdapter(

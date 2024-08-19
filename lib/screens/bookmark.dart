@@ -131,7 +131,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       ),
       body: taxis.isNotEmpty
           ? ListView.builder(
-              physics: const BouncingScrollPhysics(),
               itemCount: taxis.length,
               itemBuilder: (context, index) {
                 final taxi = taxis[index];

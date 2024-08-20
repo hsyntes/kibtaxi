@@ -896,7 +896,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  "${taxi['taxi_popularity']}",
+                                                  "${taxi['taxi_popularity']['rating']}",
                                                   style: TextStyle(
                                                     color: Theme.of(context)
                                                         .colorScheme
@@ -912,6 +912,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ignoreGestures: true,
                                                   initialRating:
                                                       taxi['taxi_popularity']
+                                                              ['rating']
                                                           .toDouble(),
                                                   itemBuilder: (context, _) =>
                                                       Icon(
@@ -927,6 +928,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white24
                                                           : Colors.black26,
                                                   onRatingUpdate: (rating) {},
+                                                ),
+                                                const SizedBox(width: 3),
+                                                Text(
+                                                  "(${taxi['taxi_popularity']['voted']})",
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white24
+                                                        : Colors.black26,
+                                                  ),
                                                 ),
                                                 const SizedBox(width: 3),
                                                 const Icon(
@@ -1304,7 +1316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                "${taxi['taxi_popularity']}",
+                                                "${taxi['taxi_popularity']['rating']}",
                                                 style: TextStyle(
                                                   color: Theme.of(context)
                                                       .colorScheme
@@ -1320,6 +1332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ignoreGestures: true,
                                                 initialRating:
                                                     taxi['taxi_popularity']
+                                                            ['rating']
                                                         .toDouble(),
                                                 itemBuilder: (context, _) =>
                                                     Icon(
@@ -1334,6 +1347,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ? Colors.white24
                                                     : Colors.black26,
                                                 onRatingUpdate: (rating) {},
+                                              ),
+                                              const SizedBox(width: 3),
+                                              Text(
+                                                "(${taxi['taxi_popularity']['voted']})",
+                                                style: TextStyle(
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.white24
+                                                      : Colors.black26,
+                                                ),
                                               ),
                                               const SizedBox(width: 3),
                                               const Icon(

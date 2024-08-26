@@ -25,5 +25,13 @@ class LightThemeData {
           actionTextColor: Color(0xFFFFA500),
         ),
         splashColor: Colors.transparent,
+        dividerTheme: const DividerThemeData(color: Colors.black12),
+        tabBarTheme: const TabBarTheme(
+          dividerColor: Colors.black12,
+          unselectedLabelColor: Colors.black54,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicatorColor: Colors.black,
+          labelColor: Colors.black,
+        ),
       );
 }

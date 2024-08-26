@@ -3,7 +3,7 @@ import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/screens/settings/language.dart';
 import 'package:kibtaxi/screens/settings/theme.dart';
 import 'package:kibtaxi/services/ad_service.dart';
-import 'package:kibtaxi/widgets/appbar.dart';
+import 'package:kibtaxi/widgets/bars/appbar.dart';
 
 Route _createThemeSettingsRoute() {
   return PageRouteBuilder(

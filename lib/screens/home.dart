@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -14,7 +13,9 @@ import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/screens/settings/settings.dart';
 import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/utils/helpers.dart';
-import 'package:kibtaxi/widgets/appbar.dart';
+import 'package:kibtaxi/widgets/bars/appbar.dart';
+import 'package:kibtaxi/widgets/bottom_sheets/cities.bottom_sheet.dart';
+import 'package:kibtaxi/widgets/bottom_sheets/profile.bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,12 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final InterstitialAds _interstitialAds = InterstitialAds();
   final ScrollController _scrollController = ScrollController();
   late Map<String, dynamic> position = {"latitude": null, "longitude": null};
-  final List<dynamic> _taxis = [];
-  Future<dynamic>? _popularTaxis;
-  bool _isTaxisLoading = false;
-  bool _hasMore = true;
-  int _currentPage = 1;
-  final int _limit = 4;
+  late Future<dynamic> _taxis;
   String? _city;
 
   Future<void> _getCity() async {
@@ -80,54 +76,20 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<dynamic> _getPopularTaxis() async {
+  Future<dynamic> _getTaxis() async {
     try {
+      print(
+          "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&API_KEY=${dotenv.env['API_KEY']}");
+
       final response = await http.get(Uri.parse(
-          "${dotenv.env['API_URL']}/taxis/popular?lat=${position['latitude']}&long=${position['longitude']}"));
+          "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&API_KEY=${dotenv.env['API_KEY']}"));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
     } catch (e) {
-      throw Exception("Something went wrong! $e");
-    }
-  }
-
-  Future<void> _getTaxis() async {
-    setState(() {
-      _isTaxisLoading = true;
-    });
-
-    try {
-      await Future.delayed(const Duration(milliseconds: 5000));
-
-      final response = await http.get(
-        Uri.parse(
-          "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&page=$_currentPage&limit=$_limit",
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        final List<dynamic> taxis = data['data']['taxis'];
-
-        setState(() {
-          if (taxis.isEmpty) {
-            _hasMore = false;
-          } else {
-            _taxis.addAll(taxis);
-            _currentPage++;
-          }
-        });
-      } else {
-        throw Exception("Failed fetching data.");
-      }
-    } catch (e) {
+      print("Failed to fetch data: $e");
       throw Exception(e);
-    } finally {
-      setState(() {
-        _isTaxisLoading = false;
-      });
     }
   }
 
@@ -138,20 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
         "longitude": longitude,
       };
 
-      _popularTaxis = _getPopularTaxis();
-      _getTaxis();
       _getCity();
+      _taxis = _getTaxis();
     });
-  }
-
-  Future<void> _initialize() async {
-    await _getCity();
-
-    setState(() {
-      _popularTaxis = _getPopularTaxis();
-    });
-
-    await _getTaxis();
   }
 
   @override
@@ -170,15 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
       "longitude": widget.position.longitude,
     };
 
-    _initialize();
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-              _scrollController.position.maxScrollExtent &&
-          !_isTaxisLoading) {
-        _getTaxis();
-      }
-    });
+    _getCity();
+    _taxis = _getTaxis();
   }
 
   @override
@@ -201,10 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         actions: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: const Icon(Icons.search),
-          // ),
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
@@ -216,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: FutureBuilder<dynamic>(
-        future: _popularTaxis,
+        future: _taxis,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CustomScrollView(
@@ -233,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 12,
                               child: CircularProgressIndicator(strokeWidth: 1),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Text(
                               AppLocalizations.of(context)!
                                   .translate("getting_most_popular"),
@@ -282,8 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             if (!snapshot.hasData ||
-                snapshot.data.isEmpty ||
-                snapshot.data['data']['taxis'].length == 0) {
+                snapshot.data['data']['popular_taxis'].length == 0 ||
+                snapshot.data['data']['taxis'] == 0) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -328,154 +268,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             enableDrag: true,
                             context: context,
                             builder: (context) {
-                              return SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.25,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.2009463,
-                                            longitude: 33.334945,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text("Lefkoşa (Nicosia)"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.095335,
-                                            longitude: 33.930475,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text(
-                                            "Gazimağusa (Famagusta)"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.332305,
-                                            longitude: 33.319577,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text("Girne (Kyrenia)"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.345549,
-                                            longitude: 33.161444,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text("Lapta"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.198005,
-                                            longitude: 32.993815,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child:
-                                            const Text("Güzelyurt (Morphou)"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.113689,
-                                            longitude: 32.849653,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text("Lefke"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                            latitude: 35.286091,
-                                            longitude: 33.892211,
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text("İskele"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          changePosition(
-                                              latitude: 35.598727,
-                                              longitude: 34.380792);
-                                          Navigator.pop(context);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                        ),
-                                        child: const Text("Dipkarpaz"),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
+                              return CitiesBottomSheet(
+                                  changePosition: changePosition);
                             },
                           );
                         },
@@ -492,7 +286,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             if (snapshot.hasData) {
               final data = snapshot.data as Map<String, dynamic>;
-              final List<dynamic> taxis = data['data']['taxis'];
+              final popular_taxis = data['data']['popular_taxis'];
+              final taxis = data['data']['taxis'];
 
               return CustomScrollView(
                 controller: _scrollController,
@@ -513,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                   ),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: 6),
                                   Text(
                                     AppLocalizations.of(context)!.translate(
                                         'most_populars',
@@ -532,166 +327,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     enableDrag: true,
                                     context: context,
                                     builder: (context) {
-                                      return SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.25,
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            children: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.2009463,
-                                                    longitude: 33.334945,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text(
-                                                    "Lefkoşa (Nicosia)"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.095335,
-                                                    longitude: 33.930475,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text(
-                                                    "Gazimağusa (Famagusta)"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.332305,
-                                                    longitude: 33.319577,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text(
-                                                    "Girne (Kyrenia)"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.345549,
-                                                    longitude: 33.161444,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text("Lapta"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.198005,
-                                                    longitude: 32.993815,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text(
-                                                    "Güzelyurt (Morphou)"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.113689,
-                                                    longitude: 32.849653,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text("Lefke"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                    latitude: 35.286091,
-                                                    longitude: 33.892211,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text("İskele"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  changePosition(
-                                                      latitude: 35.598727,
-                                                      longitude: 34.380792);
-                                                  Navigator.pop(context);
-                                                },
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                child: const Text("Dipkarpaz"),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
+                                      return CitiesBottomSheet(
+                                          changePosition: changePosition);
                                     },
                                   );
                                 },
@@ -703,11 +340,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           CarouselSlider.builder(
-                            itemCount: taxis.length,
+                            itemCount: popular_taxis.length,
                             options: CarouselOptions(
                               height: MediaQuery.of(context).size.width > 360
-                                  ? MediaQuery.of(context).size.height * .28
-                                  : MediaQuery.of(context).size.height * .34,
+                                  ? MediaQuery.of(context).size.height * .24
+                                  : MediaQuery.of(context).size.height * .3,
                               autoPlay: true,
                               autoPlayInterval:
                                   const Duration(milliseconds: 3500),
@@ -717,44 +354,69 @@ class _HomeScreenState extends State<HomeScreen> {
                               viewportFraction: 1,
                             ),
                             itemBuilder: (context, index, realIndex) {
-                              final taxi = taxis[index];
+                              final taxi = popular_taxis[index];
 
                               return Card(
                                 child: Stack(
                                   children: [
                                     ListTile(
-                                      leading: taxi['taxi_profile'] != null
-                                          ? ClipOval(
-                                              child: Image.network(
-                                                taxi['taxi_profile'],
-                                                semanticLabel: "Profile Image",
-                                                loadingBuilder:
-                                                    (context, child, progress) {
-                                                  if (progress == null) {
-                                                    return child;
-                                                  } else {
-                                                    return Skeletonizer.zone(
-                                                      child: Bone.square(
-                                                        size: 56,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(16),
-                                                      ),
-                                                    );
-                                                  }
-                                                },
+                                      leading: GestureDetector(
+                                        child: taxi['taxi_profile'] != null
+                                            ? ClipOval(
+                                                child: SizedBox(
+                                                  width: 56,
+                                                  height: 56,
+                                                  child: Image.network(
+                                                    fit: BoxFit.cover,
+                                                    taxi['taxi_profile'],
+                                                    semanticLabel:
+                                                        "Profile Image",
+                                                    loadingBuilder: (context,
+                                                        child, progress) {
+                                                      if (progress == null) {
+                                                        return child;
+                                                      } else {
+                                                        return Skeletonizer
+                                                            .zone(
+                                                          child: Bone.square(
+                                                            size: 56,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16),
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              )
+                                            : const SizedBox(
+                                                width: 56,
+                                                height: 56,
+                                                child: CircleAvatar(),
                                               ),
-                                            )
-                                          : const SizedBox(
-                                              width: 56,
-                                              height: 56,
-                                              child: CircleAvatar(),
-                                            ),
+                                        onTap: () {
+                                          _interstitialAds.showAd(
+                                            onAdClosed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen(taxi: taxi),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
                                       title: Text(
                                         taxi['taxi_name'],
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
                                       trailing: IconButton(
                                         icon: Icon(
@@ -822,19 +484,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "@${taxi['taxi_username']}",
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white54
-                                                  : Colors.black54,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
+                                          const SizedBox(height: 4),
                                           Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
@@ -848,127 +501,120 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     : Colors.black54,
                                               ),
                                               const SizedBox(width: 1),
-                                              Text(
-                                                "${taxi['taxi_city']}",
-                                                style: TextStyle(
-                                                  color: Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white54
-                                                      : Colors.black54,
-                                                  fontSize: 12,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            "${taxi['taxi_address']}",
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Tooltip(
-                                            message: AppLocalizations.of(
-                                                    context)!
-                                                .translate(
-                                                    "rating_score_google_maps"),
-                                            textStyle: TextStyle(
-                                                fontSize: 14,
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black),
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                          .colorScheme
-                                                          .brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            showDuration: const Duration(
-                                                milliseconds: 2500),
-                                            triggerMode: TooltipTriggerMode.tap,
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  "${taxi['taxi_popularity']['rating']}",
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 3),
-                                                RatingBar.builder(
-                                                  updateOnDrag: false,
-                                                  itemCount: 5,
-                                                  itemSize: 16,
-                                                  allowHalfRating: true,
-                                                  ignoreGestures: true,
-                                                  initialRating:
-                                                      taxi['taxi_popularity']
-                                                              ['rating']
-                                                          .toDouble(),
-                                                  itemBuilder: (context, _) =>
-                                                      Icon(
-                                                    Icons.star,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                  ),
-                                                  unratedColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white24
-                                                          : Colors.black26,
-                                                  onRatingUpdate: (rating) {},
-                                                ),
-                                                const SizedBox(width: 3),
-                                                Text(
-                                                  "(${taxi['taxi_popularity']['voted']})",
+                                              Flexible(
+                                                child: Text(
+                                                  "${taxi['taxi_address']}",
                                                   style: TextStyle(
                                                     color: Theme.of(context)
                                                                 .brightness ==
                                                             Brightness.dark
-                                                        ? Colors.white24
-                                                        : Colors.black26,
+                                                        ? Colors.white54
+                                                        : Colors.black54,
+                                                    fontSize: 12,
                                                   ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
                                                 ),
-                                                const SizedBox(width: 3),
-                                                const Icon(
-                                                  Icons.info,
-                                                  size: 16,
-                                                  // color: Colors.blueAccent,
-                                                )
-                                              ],
-                                            ),
-                                          )
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              taxi['taxi_popularity'] != null
+                                                  ? Row(
+                                                      children: [
+                                                        Text(
+                                                          "${taxi['taxi_popularity']['rating']}",
+                                                          style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .primary,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 3),
+                                                        RatingBar.builder(
+                                                          updateOnDrag: false,
+                                                          itemCount: 5,
+                                                          itemSize: 16,
+                                                          allowHalfRating: true,
+                                                          ignoreGestures: true,
+                                                          initialRating:
+                                                              taxi['taxi_popularity']
+                                                                      ['rating']
+                                                                  .toDouble(),
+                                                          itemBuilder:
+                                                              (context, _) =>
+                                                                  Icon(
+                                                            Icons.star,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .primary,
+                                                          ),
+                                                          unratedColor: Theme.of(
+                                                                          context)
+                                                                      .brightness ==
+                                                                  Brightness
+                                                                      .dark
+                                                              ? Colors.white24
+                                                              : Colors.black26,
+                                                          onRatingUpdate:
+                                                              (rating) {},
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 3),
+                                                        Text(
+                                                          "(${taxi['taxi_popularity']['voted']})",
+                                                          style: TextStyle(
+                                                            color: Theme.of(context)
+                                                                        .brightness ==
+                                                                    Brightness
+                                                                        .dark
+                                                                ? Colors.white24
+                                                                : Colors
+                                                                    .black26,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Text(
+                                                      "Not yet rated.",
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white54
+                                                            : Colors.black54,
+                                                      ),
+                                                    ),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                       isThreeLine: true,
                                       onTap: () {
-                                        _interstitialAds.showAd(onAdClosed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProfileScreen(
-                                                id: taxi['_id'],
-                                                appBarTitle: taxi['taxi_name'],
-                                              ),
-                                            ),
-                                          );
-                                        });
+                                        _interstitialAds.showAd(
+                                          onAdClosed: () {
+                                            showModalBottomSheet(
+                                              showDragHandle: true,
+                                              enableDrag: true,
+                                              isScrollControlled: true,
+                                              context: context,
+                                              builder: (context) {
+                                                return ProfileBottomSheet(
+                                                    taxi: taxi);
+                                              },
+                                            );
+                                          },
+                                        );
                                       },
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(18)),
+                                        borderRadius: BorderRadius.circular(18),
+                                      ),
                                     ),
                                     Positioned(
                                       bottom: 0,
@@ -1093,7 +739,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 size: 18,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 6),
                               Text(
                                 AppLocalizations.of(context)!
                                     .translate("others_around"),
@@ -1109,73 +755,86 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      childCount: _taxis.length + (_isTaxisLoading ? 1 : 0),
+                      childCount: taxis.length,
                       (context, index) {
-                        if (_isTaxisLoading && index == _taxis.length) {
-                          return const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            ),
-                          );
-                        }
-
-                        final taxi = _taxis[index];
+                        final taxi = taxis[index];
 
                         return Column(
                           children: [
                             InkWell(
                               onTap: () {
-                                _interstitialAds.showAd(onAdClosed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProfileScreen(
-                                        id: taxi['_id'],
-                                        appBarTitle: taxi['taxi_name'],
-                                      ),
-                                    ),
-                                  );
-                                });
+                                _interstitialAds.showAd(
+                                  onAdClosed: () {
+                                    showModalBottomSheet(
+                                      showDragHandle: true,
+                                      enableDrag: true,
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return ProfileBottomSheet(taxi: taxi);
+                                      },
+                                    );
+                                  },
+                                );
                               },
                               child: Column(
                                 children: [
                                   ListTile(
-                                    leading: taxi['taxi_profile'] != null
-                                        ? ClipOval(
-                                            child: Image.network(
-                                              taxi['taxi_profile'],
-                                              width: 40,
-                                              height: 40,
-                                              semanticLabel: "Profile Image",
-                                              loadingBuilder:
-                                                  (context, child, progress) {
-                                                if (progress == null) {
-                                                  return child;
-                                                } else {
-                                                  return Skeletonizer.zone(
-                                                    child: Bone.square(
-                                                      size: 40,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              16),
-                                                    ),
-                                                  );
-                                                }
-                                              },
+                                    leading: GestureDetector(
+                                      child: taxi['taxi_profile'] != null
+                                          ? ClipOval(
+                                              child: SizedBox(
+                                                width: 56,
+                                                height: 56,
+                                                child: Image.network(
+                                                  fit: BoxFit.cover,
+                                                  taxi['taxi_profile'],
+                                                  semanticLabel:
+                                                      "Profile Image",
+                                                  loadingBuilder: (context,
+                                                      child, progress) {
+                                                    if (progress == null) {
+                                                      return child;
+                                                    } else {
+                                                      return Skeletonizer.zone(
+                                                        child: Bone.square(
+                                                          size: 56,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(16),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                          : const SizedBox(
+                                              width: 56,
+                                              height: 56,
+                                              child: CircleAvatar(),
                                             ),
-                                          )
-                                        : const CircleAvatar(),
+                                      onTap: () {
+                                        _interstitialAds.showAd(
+                                          onAdClosed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(taxi: taxi),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
                                     title: Text(
                                       taxi['taxi_name'],
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                     trailing: IconButton(
                                       icon: Icon(
@@ -1242,21 +901,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          "@${taxi['taxi_username']}",
-                                          style: TextStyle(
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white54
-                                                    : Colors.black54,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: 4),
                                         Row(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
@@ -1270,104 +918,96 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   : Colors.black54,
                                             ),
                                             const SizedBox(width: 2),
-                                            Text(
-                                              "${taxi['taxi_city']}",
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white54
-                                                    : Colors.black54,
-                                                fontSize: 12,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          "${taxi['taxi_address']}",
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Tooltip(
-                                          message: AppLocalizations.of(context)!
-                                              .translate(
-                                                  "rating_score_google_maps"),
-                                          textStyle: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                        .colorScheme
-                                                        .brightness ==
-                                                    Brightness.dark
-                                                ? Colors.black
-                                                : Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          showDuration: const Duration(
-                                              milliseconds: 2500),
-                                          triggerMode: TooltipTriggerMode.tap,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "${taxi['taxi_popularity']['rating']}",
-                                                style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 3),
-                                              RatingBar.builder(
-                                                updateOnDrag: false,
-                                                itemCount: 5,
-                                                itemSize: 16,
-                                                allowHalfRating: true,
-                                                ignoreGestures: true,
-                                                initialRating:
-                                                    taxi['taxi_popularity']
-                                                            ['rating']
-                                                        .toDouble(),
-                                                itemBuilder: (context, _) =>
-                                                    Icon(
-                                                  Icons.star,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
-                                                unratedColor: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white24
-                                                    : Colors.black26,
-                                                onRatingUpdate: (rating) {},
-                                              ),
-                                              const SizedBox(width: 3),
-                                              Text(
-                                                "(${taxi['taxi_popularity']['voted']})",
+                                            Flexible(
+                                              child: Text(
+                                                "${taxi['taxi_address']}",
                                                 style: TextStyle(
                                                   color: Theme.of(context)
                                                               .brightness ==
                                                           Brightness.dark
-                                                      ? Colors.white24
-                                                      : Colors.black26,
+                                                      ? Colors.white54
+                                                      : Colors.black54,
+                                                  fontSize: 12,
                                                 ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
                                               ),
-                                              const SizedBox(width: 3),
-                                              const Icon(
-                                                Icons.info,
-                                                size: 16,
-                                                // color: Colors.blueAccent,
-                                              )
-                                            ],
-                                          ),
-                                        )
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            taxi['taxi_popularity'] != null
+                                                ? Row(
+                                                    children: [
+                                                      Text(
+                                                        "${taxi['taxi_popularity']['rating']}",
+                                                        style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 3),
+                                                      RatingBar.builder(
+                                                        updateOnDrag: false,
+                                                        itemCount: 5,
+                                                        itemSize: 16,
+                                                        allowHalfRating: true,
+                                                        ignoreGestures: true,
+                                                        initialRating:
+                                                            taxi['taxi_popularity']
+                                                                    ['rating']
+                                                                .toDouble(),
+                                                        itemBuilder:
+                                                            (context, _) =>
+                                                                Icon(
+                                                          Icons.star,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                        ),
+                                                        unratedColor: Theme.of(
+                                                                        context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white24
+                                                            : Colors.black26,
+                                                        onRatingUpdate:
+                                                            (rating) {},
+                                                      ),
+                                                      const SizedBox(width: 3),
+                                                      Text(
+                                                        "(${taxi['taxi_popularity']['voted']})",
+                                                        style: TextStyle(
+                                                          color: Theme.of(context)
+                                                                      .brightness ==
+                                                                  Brightness
+                                                                      .dark
+                                                              ? Colors.white24
+                                                              : Colors.black26,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .translate(
+                                                            'not_yet_rated'),
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white54
+                                                          : Colors.black54,
+                                                    ),
+                                                  ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                     isThreeLine: true,
@@ -1377,7 +1017,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         left: 16, right: 16),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         TextButton(
                                           onPressed: () {
@@ -1446,9 +1086,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-                            if (index !=
-                                (_taxis.length - 1) + (_isTaxisLoading ? 1 : 0))
-                              const SizedBox(height: 16),
+                            if (index != taxis.length - 1)
+                              const SizedBox(height: 24)
                           ],
                         );
                       },

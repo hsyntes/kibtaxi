@@ -41,12 +41,13 @@ class BookmarkProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     List<String>? bookmarks = prefs.getStringList('bookmarks') ?? [];
 
-    bookmarks
-        .removeWhere((bookmark) => jsonDecode(bookmark)['_id'] == value['_id']);
+    bookmarks.removeWhere((bookmark) =>
+        jsonDecode(bookmark)['taxi_placeId'] == value['taxi_placeId']);
 
     await prefs.setStringList('bookmarks', bookmarks);
 
-    _bookmarks.removeWhere((bookmark) => bookmark['_id'] == value['_id']);
+    _bookmarks.removeWhere(
+        (bookmark) => bookmark['taxi_placeId'] == value['taxi_placeId']);
 
     notifyListeners();
   }
@@ -63,6 +64,7 @@ class BookmarkProvider with ChangeNotifier {
   }
 
   bool isBookmarked(Map<String, dynamic> value) {
-    return _bookmarks.any((bookmark) => bookmark['_id'] == value['_id']);
+    return _bookmarks
+        .any((bookmark) => bookmark['taxi_placeId'] == value['taxi_placeId']);
   }
 }

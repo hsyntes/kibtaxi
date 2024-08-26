@@ -7,8 +7,9 @@ import 'package:kibtaxi/providers/bookmark.dart';
 import 'package:kibtaxi/screens/profile.dart';
 import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/utils/helpers.dart';
-import 'package:kibtaxi/widgets/appbar.dart';
+import 'package:kibtaxi/widgets/bars/appbar.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
@@ -57,7 +58,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          insetPadding: const EdgeInsets.all(4),
+                                          insetPadding:
+                                              const EdgeInsets.all(16),
                                           title: Row(
                                             children: [
                                               const Icon(
@@ -139,43 +141,68 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        _interstitialAds.showAd(onAdClosed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                id: taxi['_id'],
-                                appBarTitle: taxi['taxi_name'],
-                              ),
-                            ),
-                          );
-                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(taxi: taxi),
+                          ),
+                        );
                       },
                       child: Column(
                         children: [
                           ListTile(
                             leading: taxi['taxi_profile'] != null
                                 ? ClipOval(
-                                    child: Image.network(
-                                      taxi['taxi_profile'],
-                                      width: 40,
-                                      height: 40,
-                                      semanticLabel: "Profile Image",
+                                    child: SizedBox(
+                                      width: 56,
+                                      height: 56,
+                                      child: Image.network(
+                                        fit: BoxFit.cover,
+                                        taxi['taxi_profile'],
+                                        semanticLabel: "Profile Image",
+                                        loadingBuilder:
+                                            (context, child, progress) {
+                                          if (progress == null) {
+                                            return child;
+                                          } else {
+                                            return Skeletonizer.zone(
+                                              child: Bone.square(
+                                                size: 56,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   )
-                                : const CircleAvatar(),
+                                : const SizedBox(
+                                    width: 56,
+                                    height: 56,
+                                    child: CircleAvatar(),
+                                  ),
                             title: Text(
                               taxi['taxi_name'],
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                             trailing: IconButton(
-                              icon: const Icon(Icons.bookmark),
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
+                              icon: Icon(bookmarkProvider.isBookmarked(taxi)
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_outline),
+                              color: bookmarkProvider.isBookmarked(taxi)
+                                  ? Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black
+                                  : Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white54
+                                      : Colors.black54,
                               onPressed: () async {
                                 if (bookmarkProvider.isBookmarked(taxi)) {
                                   await bookmarkProvider.removeBookmark(taxi);
@@ -221,19 +248,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "@${taxi['taxi_username']}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white54
-                                        : Colors.black54,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 4),
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Icon(
@@ -244,99 +261,88 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           ? Colors.white54
                                           : Colors.black54,
                                     ),
-                                    const SizedBox(width: 1),
-                                    Text(
-                                      "${taxi['taxi_city']}",
-                                      style: TextStyle(
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.white54
-                                            : Colors.black54,
-                                        fontSize: 12,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "${taxi['taxi_address']}",
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                const SizedBox(height: 4),
-                                Tooltip(
-                                  message: AppLocalizations.of(context)!
-                                      .translate("rating_score_google_maps"),
-                                  textStyle: TextStyle(
-                                    fontSize: 14,
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                                .colorScheme
-                                                .brightness ==
-                                            Brightness.dark
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  showDuration:
-                                      const Duration(milliseconds: 2500),
-                                  triggerMode: TooltipTriggerMode.tap,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "${taxi['taxi_popularity']['rating']}",
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 3),
-                                      RatingBar.builder(
-                                        updateOnDrag: false,
-                                        itemCount: 5,
-                                        itemSize: 16,
-                                        allowHalfRating: true,
-                                        ignoreGestures: true,
-                                        initialRating: taxi['taxi_popularity']
-                                                ['rating']
-                                            .toDouble(),
-                                        itemBuilder: (context, _) => Icon(
-                                          Icons.star,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                        unratedColor:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.white24
-                                                : Colors.black26,
-                                        onRatingUpdate: (rating) {},
-                                      ),
-                                      const SizedBox(width: 3),
-                                      Text(
-                                        "(${taxi['taxi_popularity']['voted']})",
+                                    const SizedBox(width: 2),
+                                    Flexible(
+                                      child: Text(
+                                        "${taxi['taxi_address']}",
                                         style: TextStyle(
                                           color: Theme.of(context).brightness ==
                                                   Brightness.dark
-                                              ? Colors.white24
-                                              : Colors.black26,
+                                              ? Colors.white54
+                                              : Colors.black54,
+                                          fontSize: 12,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
                                       ),
-                                      const SizedBox(width: 3),
-                                      const Icon(
-                                        Icons.info,
-                                        size: 16,
-                                        // color: Colors.blueAccent,
-                                      )
-                                    ],
-                                  ),
-                                )
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    taxi['taxi_popularity'] != null
+                                        ? Row(
+                                            children: [
+                                              Text(
+                                                "${taxi['taxi_popularity']['rating']}",
+                                                style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 3),
+                                              RatingBar.builder(
+                                                updateOnDrag: false,
+                                                itemCount: 5,
+                                                itemSize: 16,
+                                                allowHalfRating: true,
+                                                ignoreGestures: true,
+                                                initialRating:
+                                                    taxi['taxi_popularity']
+                                                            ['rating']
+                                                        .toDouble(),
+                                                itemBuilder: (context, _) =>
+                                                    Icon(
+                                                  Icons.star,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                                unratedColor: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white24
+                                                    : Colors.black26,
+                                                onRatingUpdate: (rating) {},
+                                              ),
+                                              const SizedBox(width: 3),
+                                              Text(
+                                                "(${taxi['taxi_popularity']['voted']})",
+                                                style: TextStyle(
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.white24
+                                                      : Colors.black26,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Text(
+                                            AppLocalizations.of(context)!
+                                                .translate('not_yet_rated'),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white54
+                                                  : Colors.black54,
+                                            ),
+                                          ),
+                                  ],
+                                ),
                               ],
                             ),
                             isThreeLine: true,
@@ -344,7 +350,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 16, right: 16),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 TextButton(
                                   onPressed: () {
@@ -410,12 +416,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         ],
                       ),
                     ),
-                    if (index != taxis.length - 1) const SizedBox(height: 16),
                     if (index < 1)
                       const Padding(
-                        padding: EdgeInsets.only(bottom: 16),
+                        padding: EdgeInsets.only(top: 16, bottom: 16),
                         child: BannerAdWidget(),
                       ),
+                    if (index != taxis.length - 1) const SizedBox(height: 24)
                   ],
                 );
               },

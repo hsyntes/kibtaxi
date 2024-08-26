@@ -100,6 +100,7 @@ flutter:
     - assets/icons/brand.dark.png
     - assets/icons/splash.png
     - assets/icons/splash.light.png
+    - assets/icons/brands/google_maps.png
     - assets/lang/
     - .env
 

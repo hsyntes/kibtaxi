@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibtaxi/app.dart';
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/services/ad_service.dart';
-import 'package:kibtaxi/widgets/appbar.dart';
+import 'package:kibtaxi/widgets/bars/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {

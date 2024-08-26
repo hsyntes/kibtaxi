@@ -1,433 +1,609 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:kibtaxi/app_localization.dart';
 import 'package:kibtaxi/providers/bookmark.dart';
 import 'package:kibtaxi/services/ad_service.dart';
 import 'package:kibtaxi/utils/helpers.dart';
-import 'package:kibtaxi/widgets/appbar.dart';
+import 'package:kibtaxi/widgets/bars/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  final InterstitialAds _interstitialAds = InterstitialAds();
-  late Future<dynamic> _taxi;
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
 
-  Future<dynamic> _getTaxi() async {
-    try {
-      final response = await http
-          .get(Uri.parse("${dotenv.env['API_URL']}/taxis/id/${widget.id}"));
+  final TabBar _tabBar;
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as Map<String, dynamic>;
-      }
-    } catch (e) {
-      throw Exception(e);
-    }
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF030a0e)
+          : Colors.white,
+      child: _tabBar,
+    );
   }
 
   @override
-  void initState() {
-    super.initState();
-    _taxi = _getTaxi();
-    // _interstitialAds.loadAd();
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final InterstitialAds _interstitialAds = InterstitialAds();
 
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
 
-    return Scaffold(
-      appBar: MyAppBar(
-        title: Text(
-          widget.appBarTitle,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    List<dynamic>? taxi_reviews = [];
+
+    if (widget.taxi['taxi_reviews'] != null) {
+      if (widget.taxi['taxi_reviews'].length >= 5) {
+        taxi_reviews.addAll(widget.taxi['taxi_reviews']?.sublist(0, 5));
+      } else if (widget.taxi['taxi_reviews']?.length >= 1) {
+        taxi_reviews.addAll(widget.taxi['taxi_reviews']
+            ?.sublist(0, widget.taxi['taxi_reviews'].length));
+      } else {
+        taxi_reviews = null;
+      }
+    }
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: MyAppBar(
+          title: Text(
+            widget.taxi['taxi_name'],
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
         ),
-      ),
-      body: FutureBuilder<dynamic>(
-        future: _taxi,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Skeletonizer.zone(
-              child: ListTile(
-                leading: Bone.circle(size: 48),
-                title: Bone.text(words: 2),
-                subtitle: Bone.text(words: 1),
-                trailing: Bone.icon(),
-                isThreeLine: true,
-              ),
-            );
-          }
-
-          if (snapshot.hasData) {
-            final taxi = snapshot.data['data']['taxi'];
-
-            return CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: taxi['taxi_profile'] != null
-                            ? ClipOval(
-                                child: Image.network(
-                                  taxi['taxi_profile'],
-                                  semanticLabel: "Profile Image",
-                                  loadingBuilder: (context, child, progress) {
-                                    if (progress == null) {
-                                      return child;
-                                    } else {
-                                      return Skeletonizer.zone(
-                                        child: Bone.square(
-                                          size: 56,
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              )
-                            : const SizedBox(
-                                width: 56,
-                                height: 56,
-                                child: CircleAvatar(),
-                              ),
-                        title: Text(taxi['taxi_name']),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "@${taxi['taxi_username']}",
-                              style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white54
-                                    : Colors.black54,
-                                fontSize: 12,
+        body: CustomScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: widget.taxi['taxi_profile'] != null
+                        ? ClipOval(
+                            child: SizedBox(
+                              width: 56,
+                              height: 56,
+                              child: Image.network(
+                                fit: BoxFit.cover,
+                                widget.taxi['taxi_profile'],
+                                semanticLabel: "Profile Image",
+                                loadingBuilder: (context, child, progress) {
+                                  if (progress == null) {
+                                    return child;
+                                  } else {
+                                    return Skeletonizer.zone(
+                                      child: Bone.square(
+                                        size: 56,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 16,
+                          )
+                        : const SizedBox(
+                            width: 56,
+                            height: 56,
+                            child: CircleAvatar(),
+                          ),
+                    title: Text(
+                      widget.taxi['taxi_name'],
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(bookmarkProvider.isBookmarked(widget.taxi)
+                          ? Icons.bookmark
+                          : Icons.bookmark_outline),
+                      color: bookmarkProvider.isBookmarked(widget.taxi)
+                          ? Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black
+                          : Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white54
+                              : Colors.black54,
+                      onPressed: () async {
+                        if (bookmarkProvider.isBookmarked(widget.taxi)) {
+                          await bookmarkProvider.removeBookmark(widget.taxi);
+
+                          Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!
+                                .translate("taxi_removed"),
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            textColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                          );
+                        } else {
+                          await bookmarkProvider.setBookmark(widget.taxi);
+
+                          Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!
+                                .translate("taxi_added"),
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            textColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                          );
+                        }
+                      },
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white54
+                                  : Colors.black54,
+                            ),
+                            const SizedBox(width: 1),
+                            Flexible(
+                              child: Text(
+                                "${widget.taxi['taxi_address']}",
+                                style: TextStyle(
                                   color: Theme.of(context).brightness ==
                                           Brightness.dark
                                       ? Colors.white54
                                       : Colors.black54,
+                                  fontSize: 12,
                                 ),
-                                const SizedBox(width: 1),
-                                Text(
-                                  "${taxi['taxi_city']}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white54
-                                        : Colors.black54,
-                                    fontSize: 12,
-                                  ),
-                                )
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${taxi['taxi_address']}",
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            const SizedBox(height: 4),
-                            Tooltip(
-                              message: AppLocalizations.of(context)!
-                                  .translate("rating_score_google_maps"),
-                              textStyle: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    Theme.of(context).colorScheme.brightness ==
-                                            Brightness.dark
-                                        ? Colors.black
-                                        : Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              showDuration: const Duration(milliseconds: 2500),
-                              triggerMode: TooltipTriggerMode.tap,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "${taxi['taxi_popularity']['rating']}",
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  RatingBar.builder(
-                                    updateOnDrag: false,
-                                    itemCount: 5,
-                                    itemSize: 16,
-                                    allowHalfRating: true,
-                                    ignoreGestures: true,
-                                    initialRating: taxi['taxi_popularity']
-                                            ['rating']
-                                        .toDouble(),
-                                    itemBuilder: (context, _) => Icon(
-                                      Icons.star,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    unratedColor:
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.white24
-                                            : Colors.black26,
-                                    onRatingUpdate: (rating) {},
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    "(${taxi['taxi_popularity']['voted']})",
-                                    style: TextStyle(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white24
-                                          : Colors.black26,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  const Icon(
-                                    Icons.info,
-                                    size: 16,
-                                    // color: Colors.blueAccent,
-                                  )
-                                ],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
                             )
                           ],
                         ),
-                        trailing: IconButton(
-                          onPressed: () async {
-                            if (bookmarkProvider.isBookmarked(taxi)) {
-                              await bookmarkProvider.removeBookmark(taxi);
-
-                              Fluttertoast.showToast(
-                                msg: AppLocalizations.of(context)!
-                                    .translate("taxi_removed"),
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                textColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                backgroundColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                              );
-                            } else {
-                              await bookmarkProvider.setBookmark(taxi);
-
-                              Fluttertoast.showToast(
-                                msg: AppLocalizations.of(context)!
-                                    .translate("taxi_added"),
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                textColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                backgroundColor: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                              );
-                            }
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            widget.taxi['taxi_popularity'] != null
+                                ? Row(
+                                    children: [
+                                      Text(
+                                        "${widget.taxi['taxi_popularity']['rating']}",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 3),
+                                      RatingBar.builder(
+                                        updateOnDrag: false,
+                                        itemCount: 5,
+                                        itemSize: 16,
+                                        allowHalfRating: true,
+                                        ignoreGestures: true,
+                                        initialRating: widget
+                                            .taxi['taxi_popularity']['rating']
+                                            .toDouble(),
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        unratedColor:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white24
+                                                : Colors.black26,
+                                        onRatingUpdate: (rating) {},
+                                      ),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        "(${widget.taxi['taxi_popularity']['voted']})",
+                                        style: TextStyle(
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white24
+                                              : Colors.black26,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Text(
+                                    AppLocalizations.of(context)!
+                                        .translate('not_yet_rated'),
+                                    style: TextStyle(
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white54
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    isThreeLine: true,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16, left: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            _interstitialAds.showAd(onAdClosed: () {
+                              makePhoneCall(context, widget.taxi['taxi_phone']);
+                            });
                           },
-                          icon: Icon(
-                            bookmarkProvider.isBookmarked(taxi)
-                                ? Icons.bookmark
-                                : Icons.bookmark_outline,
-                            color: bookmarkProvider.isBookmarked(taxi)
-                                ? Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black
-                                : Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white54
-                                    : Colors.black54,
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.phone,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .translate('phone'),
+                              )
+                            ],
                           ),
                         ),
-                        isThreeLine: true,
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16, left: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                _interstitialAds.showAd(onAdClosed: () {
-                                  makePhoneCall(context, taxi['taxi_phone']);
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
+                        TextButton(
+                          onPressed: () {
+                            _interstitialAds.showAd(onAdClosed: () async {
+                              await launchUrl(
+                                Uri(
+                                  scheme: "https",
+                                  host: "api.whatsapp.com",
+                                  path: "send",
+                                  queryParameters: {
+                                    'phone': widget.taxi['taxi_phone']
+                                  },
+                                ),
+                              );
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.green,
+                            elevation: 0,
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                MaterialCommunityIcons.whatsapp,
+                                size: 18,
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.phone,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    AppLocalizations.of(context)!
-                                        .translate('phone'),
-                                  )
-                                ],
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                _interstitialAds.showAd(onAdClosed: () async {
-                                  await launchUrl(
-                                    Uri(
-                                      scheme: "https",
-                                      host: "api.whatsapp.com",
-                                      path: "send",
-                                      queryParameters: {
-                                        'phone': taxi['taxi_phone']
+                              SizedBox(width: 4),
+                              Text("WhatsApp")
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            SliverPersistentHeader(
+              delegate: _SliverAppBarDelegate(
+                const TabBar(
+                  tabs: [
+                    Tab(
+                        icon: Icon(
+                      Icons.photo,
+                      semanticLabel: "Kibtaxi Taxi Photos",
+                    )),
+                    Tab(
+                        icon: Icon(
+                      Icons.comment,
+                      semanticLabel: "Kibtaxi Taxi Comments",
+                    )),
+                  ],
+                ),
+              ),
+            ),
+            SliverFillRemaining(
+              child: TabBarView(
+                children: [
+                  CustomScrollView(
+                    // physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.only(
+                            top: 24, bottom: 24, left: 16, right: 16),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            childCount: widget.taxi['taxi_photos']?.length ?? 0,
+                            (context, index) {
+                              return SizedBox(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => Dialog(
+                                        backgroundColor: Colors.transparent,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                              sigmaX: 6,
+                                              sigmaY: 6,
+                                            ),
+                                            child: Hero(
+                                              transitionOnUserGestures: true,
+                                              tag: 'imageHero$index',
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.network(
+                                                  widget.taxi['taxi_photos']
+                                                      [index],
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      widget.taxi['taxi_photos'][index],
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, progress) {
+                                        if (progress == null) {
+                                          return child;
+                                        } else {
+                                          return Skeletonizer.zone(
+                                            child: Bone.square(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          );
+                                        }
                                       },
                                     ),
-                                  );
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.green,
-                                elevation: 0,
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    MaterialCommunityIcons.whatsapp,
-                                    size: 18,
                                   ),
-                                  SizedBox(width: 4),
-                                  Text("WhatsApp")
-                                ],
-                              ),
-                            ),
-                          ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       )
                     ],
                   ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      // crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      childCount: taxi['taxi_photos']?.length ?? 0,
-                      (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: BackdropFilter(
-                                    filter: ImageFilter.blur(
-                                      sigmaX: 6,
-                                      sigmaY: 6,
-                                    ),
-                                    child: Hero(
-                                      transitionOnUserGestures: true,
-                                      tag: 'imageHero$index',
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          taxi['taxi_photos'][index],
-                                          fit: BoxFit.contain,
+                  CustomScrollView(
+                    // physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.only(top: 24, bottom: 24),
+                        sliver: taxi_reviews != null
+                            ? SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  childCount: taxi_reviews.length,
+                                  (context, index) {
+                                    final taxi_review = taxi_reviews![index];
+
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                          leading: taxi_review[
+                                                      'reviewer_photo'] !=
+                                                  null
+                                              ? ClipOval(
+                                                  child: SizedBox(
+                                                    width: 42,
+                                                    height: 42,
+                                                    child: Image.network(
+                                                      fit: BoxFit.cover,
+                                                      taxi_review[
+                                                          'reviewer_photo'],
+                                                      semanticLabel:
+                                                          "Profile Image",
+                                                      loadingBuilder: (context,
+                                                          child, progress) {
+                                                        if (progress == null) {
+                                                          return child;
+                                                        } else {
+                                                          return Skeletonizer
+                                                              .zone(
+                                                            child: Bone.square(
+                                                              size: 56,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          16),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox(
+                                                  width: 42,
+                                                  height: 42,
+                                                  child: CircleAvatar(),
+                                                ),
+                                          title: Text(
+                                            "${taxi_review['reviewer_name']}",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: 4,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "${taxi_review['reviewer_rating']}",
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 3),
+                                                  RatingBar.builder(
+                                                    updateOnDrag: false,
+                                                    itemCount: 5,
+                                                    itemSize: 16,
+                                                    allowHalfRating: true,
+                                                    ignoreGestures: true,
+                                                    initialRating: taxi_review[
+                                                            'reviewer_rating']
+                                                        .toDouble(),
+                                                    itemBuilder: (context, _) =>
+                                                        Icon(
+                                                      Icons.star,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                    ),
+                                                    unratedColor: Theme.of(
+                                                                    context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white24
+                                                        : Colors.black26,
+                                                    onRatingUpdate: (rating) {},
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 8),
+                                              if (taxi_review['reviewer_review']
+                                                      ?['text'] !=
+                                                  null)
+                                                Text(
+                                                    "${taxi_review['reviewer_review']['text']}"),
+                                            ],
+                                          ),
+                                          isThreeLine: true,
                                         ),
-                                      ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              )
+                            : SliverFillRemaining(
+                                hasScrollBody: false,
+                                child: Center(
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .translate("not_yet_rated"),
+                                    style: TextStyle(
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white54
+                                          : Colors.black54,
                                     ),
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              taxi['taxi_photos'][index],
-                              loadingBuilder: (context, child, progress) {
-                                if (progress == null) {
-                                  return child;
-                                } else {
-                                  return Skeletonizer.zone(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Bone.square(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                )
-              ],
-            );
-          }
-
-          return const Text("");
-        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await launchUrl(Uri.parse(widget.taxi['taxi_googleMaps']));
+          },
+          enableFeedback: true,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF081017)
+              : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(360),
+          ),
+          child: Image.asset(
+            'assets/icons/brands/google_maps.png',
+            width: 24,
+            height: 24,
+          ),
+        ),
+        bottomNavigationBar: const BannerAdWidget(),
       ),
-      bottomNavigationBar: const BannerAdWidget(),
     );
   }
 }
 
 class ProfileScreen extends StatefulWidget {
-  final String appBarTitle;
-  final String id;
-  const ProfileScreen({required this.id, required this.appBarTitle, super.key});
+  final Map<String, dynamic> taxi;
+  const ProfileScreen({required this.taxi, super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();

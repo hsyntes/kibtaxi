@@ -36,5 +36,13 @@ class DarkThemeData {
           contentTextStyle: TextStyle(color: Colors.white),
           actionTextColor: Color(0xFFFFA500),
         ),
+        dividerTheme: const DividerThemeData(color: Colors.white10),
+        tabBarTheme: const TabBarTheme(
+          dividerColor: Colors.white30,
+          unselectedLabelColor: Colors.white54,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+        ),
       );
 }

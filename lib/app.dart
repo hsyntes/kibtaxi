@@ -12,7 +12,7 @@ import 'package:kibtaxi/screens/bookmark.dart';
 import 'package:kibtaxi/screens/home.dart';
 import 'package:kibtaxi/themes/dark.dart';
 import 'package:kibtaxi/themes/light.dart';
-import 'package:kibtaxi/widgets/bottom_navigation.dart';
+import 'package:kibtaxi/widgets/bars/bottom.navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,14 +43,17 @@ class _MyAppState extends State<MyApp>
 
   Future<void> _checkApiHealth() async {
     try {
+      print("${dotenv.env['API_URL']}?API_KEY=${dotenv.env['API_KEY']}");
+
       final response = await http.get(
-        Uri.parse("${dotenv.env['API_URL']}"),
+        Uri.parse("${dotenv.env['API_URL']}?API_KEY=${dotenv.env['API_KEY']}"),
       );
 
       if (response.statusCode == 200) {
         debugPrint("Connection to the server is successful.");
       }
     } catch (e) {
+      print("Connection to the server is failed: $e");
       throw Exception("Connection to the server is failed.");
     }
   }
@@ -210,17 +213,17 @@ class _MyAppState extends State<MyApp>
                           color: Theme.of(context).colorScheme.primary,
                           size: 42,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         FadeTransition(
+                          opacity: _animation!,
                           child: Text(
                             AppLocalizations.of(context)!
                                 .translate("finding_location"),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          opacity: _animation!,
                         ),
                       ],
                     ),
@@ -233,7 +236,7 @@ class _MyAppState extends State<MyApp>
                       children: [
                         SpinKitRipple(
                           size: MediaQuery.of(context).size.width * 0.5,
-                          duration: Duration(milliseconds: 2000),
+                          duration: const Duration(milliseconds: 2000),
                           itemBuilder: (context, index) {
                             return DecoratedBox(
                               decoration: BoxDecoration(
@@ -270,12 +273,12 @@ class _MyAppState extends State<MyApp>
                             size: 42,
                           ),
                           Padding(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             child: Text(
                               AppLocalizations.of(context)!
                                   .translate("location_services_disabled"),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -334,12 +337,12 @@ class _MyAppState extends State<MyApp>
                           ),
                           // SizedBox(height: 8),
                           Padding(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             child: Text(
                               AppLocalizations.of(context)!
                                   .translate("location_permissions_denied"),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -391,12 +394,12 @@ class _MyAppState extends State<MyApp>
                             size: 42,
                           ),
                           Padding(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             child: Text(
                               AppLocalizations.of(context)!.translate(
                                   "location_permissions_permanently_denied"),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -439,19 +442,19 @@ class _MyAppState extends State<MyApp>
             }
 
             if (snapshot.hasData) {
-              final List<Widget> _screens = [
+              final List<Widget> screens = [
                 HomeScreen(
                   position: snapshot.data,
                 ),
                 // SearchScreen(),
                 // MapScreen(),
-                BookmarkScreen(),
+                const BookmarkScreen(),
               ];
 
               return Scaffold(
                 body: IndexedStack(
                   index: _currentIndex,
-                  children: _screens,
+                  children: screens,
                 ),
                 bottomNavigationBar: MyBottomNavigationBar(
                   currentIndex: _currentIndex,
@@ -460,7 +463,7 @@ class _MyAppState extends State<MyApp>
               );
             }
 
-            return Center(child: Text("Something went wrong."));
+            return const Center(child: Text("Something went wrong."));
           },
         ),
       ),

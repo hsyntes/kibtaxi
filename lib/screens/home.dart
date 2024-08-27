@@ -137,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? 'assets/icons/brand.light.png'
                 : 'assets/icons/brand.dark.png',
             height: 32,
+            semanticLabel: "Brand Logo",
           ),
           onTap: () {
             _scrollController.animateTo(0.0,
@@ -151,7 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 _createSettingsRoute(),
               );
             },
-            icon: const Icon(Icons.menu),
+            icon: const Icon(
+              Icons.menu,
+              semanticLabel: "Menu Icon",
+            ),
           ),
         ],
       ),
@@ -171,7 +175,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(
                               width: 12,
                               height: 12,
-                              child: CircularProgressIndicator(strokeWidth: 1),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1,
+                                semanticsLabel: "Spinner",
+                              ),
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -183,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? Colors.white54
                                     : Colors.black54,
                               ),
+                              semanticsLabel: "Most Popular Taxis",
                             ),
                           ],
                         ),
@@ -217,7 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               return Center(
-                child: Text("Error: ${snapshot.error}"),
+                child: Text(
+                  "Error: ${snapshot.error}",
+                  semanticsLabel: "API Failed Error Message",
+                ),
               ); // Provide error details
             }
 
@@ -236,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.location_on,
                         color: Theme.of(context).colorScheme.primary,
                         size: 32,
+                        semanticLabel: "Location Icon",
                       ),
                       const SizedBox(height: 4),
                       Center(
@@ -243,6 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           AppLocalizations.of(context)!.translate("in_trnc"),
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
+                          semanticsLabel: "Question about are you in TRNC",
                         ),
                       )
                     ],
@@ -257,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             AppLocalizations.of(context)!
                                 .translate("near_taxis_error"),
                             textAlign: TextAlign.center,
+                            semanticsLabel: "Couldn't find taxis error message",
                           ),
                         ),
                       ),
@@ -269,13 +283,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             context: context,
                             builder: (context) {
                               return CitiesBottomSheet(
-                                  changePosition: changePosition);
+                                changePosition: changePosition,
+                              );
                             },
                           );
                         },
                         child: Text(
                           AppLocalizations.of(context)!
                               .translate("change_location"),
+                          semanticsLabel: "Change Location",
                         ),
                       )
                     ],
@@ -307,6 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     size: 18,
                                     color:
                                         Theme.of(context).colorScheme.primary,
+                                    semanticLabel: "Rocket Icon",
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
@@ -315,8 +332,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         params: {'city': "$_city"}),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.clip,
-                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    semanticsLabel: "Most Popular Taxis",
                                   ),
                                 ],
                               ),
@@ -328,13 +346,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context: context,
                                     builder: (context) {
                                       return CitiesBottomSheet(
-                                          changePosition: changePosition);
+                                        changePosition: changePosition,
+                                      );
                                     },
                                   );
                                 },
                                 child: Text(
                                   AppLocalizations.of(context)!
                                       .translate('change'),
+                                  semanticsLabel: "Change Location Text Button",
                                 ),
                               ),
                             ],
@@ -357,6 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               final taxi = popular_taxis[index];
 
                               return Card(
+                                semanticContainer: true,
                                 child: Stack(
                                   children: [
                                     ListTile(
@@ -417,12 +438,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
+                                        semanticsLabel: "Taxi Name",
                                       ),
                                       trailing: IconButton(
                                         icon: Icon(
-                                            bookmarkProvider.isBookmarked(taxi)
-                                                ? Icons.bookmark
-                                                : Icons.bookmark_outline),
+                                          bookmarkProvider.isBookmarked(taxi)
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_outline,
+                                          semanticLabel: "Bookmark Icon",
+                                        ),
                                         color: bookmarkProvider
                                                 .isBookmarked(taxi)
                                             ? Theme.of(context).brightness ==
@@ -499,6 +523,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         Brightness.dark
                                                     ? Colors.white54
                                                     : Colors.black54,
+                                                semanticLabel: "Location Icon",
                                               ),
                                               const SizedBox(width: 1),
                                               Flexible(
@@ -515,6 +540,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 2,
+                                                  semanticsLabel:
+                                                      "Taxi Address",
                                                 ),
                                               )
                                             ],
@@ -533,6 +560,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .colorScheme
                                                                 .primary,
                                                           ),
+                                                          semanticsLabel:
+                                                              "Taxi Rating Score",
                                                         ),
                                                         const SizedBox(
                                                             width: 3),
@@ -554,6 +583,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     context)
                                                                 .colorScheme
                                                                 .primary,
+                                                            semanticLabel:
+                                                                "Star Icon",
                                                           ),
                                                           unratedColor: Theme.of(
                                                                           context)
@@ -578,6 +609,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 : Colors
                                                                     .black26,
                                                           ),
+                                                          semanticsLabel:
+                                                              "Taxi Rating Voted",
                                                         ),
                                                       ],
                                                     )
@@ -590,6 +623,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             ? Colors.white54
                                                             : Colors.black54,
                                                       ),
+                                                      semanticsLabel:
+                                                          "Not yet taxi rating",
                                                     ),
                                             ],
                                           ),
@@ -597,17 +632,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       isThreeLine: true,
                                       onTap: () {
-                                        _interstitialAds.showAd(
-                                          onAdClosed: () {
-                                            showModalBottomSheet(
-                                              showDragHandle: true,
-                                              enableDrag: true,
-                                              isScrollControlled: true,
-                                              context: context,
-                                              builder: (context) {
-                                                return ProfileBottomSheet(
-                                                    taxi: taxi);
-                                              },
+                                        showModalBottomSheet(
+                                          showDragHandle: true,
+                                          enableDrag: true,
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (context) {
+                                            return ProfileBottomSheet(
+                                              taxi: taxi,
                                             );
                                           },
                                         );
@@ -653,12 +685,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   const Icon(
                                                     Icons.phone,
                                                     size: 18,
+                                                    semanticLabel: "Phone Icon",
                                                   ),
                                                   const SizedBox(width: 4),
                                                   Text(
                                                     AppLocalizations.of(
                                                             context)!
                                                         .translate('phone'),
+                                                    semanticsLabel: "Phone",
                                                   )
                                                 ],
                                               ),
@@ -702,9 +736,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     MaterialCommunityIcons
                                                         .whatsapp,
                                                     size: 18,
+                                                    semanticLabel:
+                                                        "WhatsApp Icon",
                                                   ),
                                                   SizedBox(width: 4),
-                                                  Text("WhatsApp")
+                                                  Text(
+                                                    "WhatsApp",
+                                                    semanticsLabel: "WhatsApp",
+                                                  )
                                                 ],
                                               ),
                                             ),
@@ -738,6 +777,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Icons.my_location,
                                 size: 18,
                                 color: Theme.of(context).colorScheme.primary,
+                                semanticLabel: "My Location Icon",
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -745,6 +785,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .translate("others_around"),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
+                                semanticsLabel: "Others Around You",
                               ),
                             ],
                           ),
@@ -763,17 +804,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             InkWell(
                               onTap: () {
-                                _interstitialAds.showAd(
-                                  onAdClosed: () {
-                                    showModalBottomSheet(
-                                      showDragHandle: true,
-                                      enableDrag: true,
-                                      isScrollControlled: true,
-                                      context: context,
-                                      builder: (context) {
-                                        return ProfileBottomSheet(taxi: taxi);
-                                      },
-                                    );
+                                showModalBottomSheet(
+                                  showDragHandle: true,
+                                  enableDrag: true,
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return ProfileBottomSheet(taxi: taxi);
                                   },
                                 );
                               },
@@ -835,12 +872,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
+                                      semanticsLabel: "Taxi Name",
                                     ),
                                     trailing: IconButton(
                                       icon: Icon(
-                                          bookmarkProvider.isBookmarked(taxi)
-                                              ? Icons.bookmark
-                                              : Icons.bookmark_outline),
+                                        bookmarkProvider.isBookmarked(taxi)
+                                            ? Icons.bookmark
+                                            : Icons.bookmark_outline,
+                                        semanticLabel: "Bookmark Icon",
+                                      ),
                                       color: bookmarkProvider.isBookmarked(taxi)
                                           ? Theme.of(context).brightness ==
                                                   Brightness.dark
@@ -916,6 +956,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Brightness.dark
                                                   ? Colors.white54
                                                   : Colors.black54,
+                                              semanticLabel: "Location Icon",
                                             ),
                                             const SizedBox(width: 2),
                                             Flexible(
@@ -931,6 +972,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 2,
+                                                semanticsLabel: "Taxi Address",
                                               ),
                                             ),
                                           ],
@@ -949,6 +991,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   .colorScheme
                                                                   .primary,
                                                         ),
+                                                        semanticsLabel:
+                                                            "Taxi Rating Score",
                                                       ),
                                                       const SizedBox(width: 3),
                                                       RatingBar.builder(
@@ -969,6 +1013,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               Theme.of(context)
                                                                   .colorScheme
                                                                   .primary,
+                                                          semanticLabel:
+                                                              "Start Icon",
                                                         ),
                                                         unratedColor: Theme.of(
                                                                         context)
@@ -990,6 +1036,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               ? Colors.white24
                                                               : Colors.black26,
                                                         ),
+                                                        semanticsLabel:
+                                                            "Taxi Rating Voted",
                                                       ),
                                                     ],
                                                   )
@@ -1005,6 +1053,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ? Colors.white54
                                                           : Colors.black54,
                                                     ),
+                                                    semanticsLabel:
+                                                        "Not yet taxi rating",
                                                   ),
                                           ],
                                         ),
@@ -1038,11 +1088,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               const Icon(
                                                 Icons.phone,
                                                 size: 18,
+                                                semanticLabel: "Phone Icon",
                                               ),
                                               const SizedBox(width: 4),
                                               Text(
                                                 AppLocalizations.of(context)!
                                                     .translate('phone'),
+                                                semanticsLabel: "Phone",
                                               )
                                             ],
                                           ),
@@ -1074,9 +1126,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Icon(
                                                 MaterialCommunityIcons.whatsapp,
                                                 size: 18,
+                                                semanticLabel: "WhatsApp Icon",
                                               ),
                                               SizedBox(width: 4),
-                                              Text("WhatsApp")
+                                              Text(
+                                                "WhatsApp",
+                                                semanticsLabel: "WhatsApp",
+                                              )
                                             ],
                                           ),
                                         ),
@@ -1098,7 +1154,10 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             return const Center(
-              child: Text("Something went wrong."),
+              child: Text(
+                "Something went wrong.",
+                semanticsLabel: "Error text: Something went wrong",
+              ),
             );
           }
 
@@ -1106,9 +1165,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SizedBox(
               width: 192,
               height: 192,
-              child: Image.asset(Theme.of(context).brightness == Brightness.dark
-                  ? 'assets/icons/splash.light.png'
-                  : 'assets/icons/splash.png'),
+              child: Image.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/icons/splash.light.png'
+                    : 'assets/icons/splash.png',
+                semanticLabel: "Splash Icon",
+              ),
             ),
           );
         },

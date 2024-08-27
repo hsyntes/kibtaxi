@@ -30,10 +30,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         leading: Icon(
           Icons.bookmark,
           color: Theme.of(context).colorScheme.primary,
+          semanticLabel: "Bookmark Icon",
         ),
         title: Text(
           AppLocalizations.of(context)!.translate("my_taxis"),
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          semanticsLabel: "My Saved Taxis",
         ),
         actions: taxis.isNotEmpty
             ? [
@@ -84,6 +86,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                             AppLocalizations.of(context)!
                                                 .translate(
                                                     "want_to_remove_all"),
+                                            semanticsLabel:
+                                                "Remove All Question",
                                           ),
                                           contentTextStyle: TextStyle(
                                             fontSize: 14,
@@ -93,6 +97,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                     ? Colors.white
                                                     : Colors.black,
                                           ),
+                                          semanticLabel:
+                                              "Remove Taxis Saved Dialog",
                                           actions: [
                                             TextButton(
                                               onPressed: () async {
@@ -108,6 +114,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.red,
                                                 ),
+                                                semanticsLabel: "Yes",
                                               ),
                                             ),
                                           ],
@@ -119,6 +126,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                     AppLocalizations.of(context)!
                                         .translate("remove_all"),
                                     style: const TextStyle(color: Colors.red),
+                                    semanticsLabel: "Remove All",
                                   ),
                                 ),
                               ],
@@ -127,7 +135,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         },
                       );
                     },
-                    icon: const Icon(Icons.menu))
+                    icon: const Icon(
+                      Icons.menu,
+                      semanticLabel: "Menu Icon",
+                    ))
               ]
             : null,
       ),
@@ -189,11 +200,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
+                              semanticsLabel: "Taxi Name",
                             ),
                             trailing: IconButton(
-                              icon: Icon(bookmarkProvider.isBookmarked(taxi)
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_outline),
+                              icon: Icon(
+                                bookmarkProvider.isBookmarked(taxi)
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_outline,
+                                semanticLabel: "Bookmark Icon",
+                              ),
                               color: bookmarkProvider.isBookmarked(taxi)
                                   ? Theme.of(context).brightness ==
                                           Brightness.dark
@@ -260,6 +275,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                               Brightness.dark
                                           ? Colors.white54
                                           : Colors.black54,
+                                      semanticLabel: "Location Icon",
                                     ),
                                     const SizedBox(width: 2),
                                     Flexible(
@@ -274,6 +290,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
+                                        semanticsLabel: "Taxi Address",
                                       ),
                                     ),
                                   ],
@@ -291,6 +308,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                       .colorScheme
                                                       .primary,
                                                 ),
+                                                semanticsLabel:
+                                                    "Taxi Rating Score",
                                               ),
                                               const SizedBox(width: 3),
                                               RatingBar.builder(
@@ -309,6 +328,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .primary,
+                                                  semanticLabel: "Star Icon",
                                                 ),
                                                 unratedColor: Theme.of(context)
                                                             .brightness ==
@@ -327,6 +347,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                       ? Colors.white24
                                                       : Colors.black26,
                                                 ),
+                                                semanticsLabel:
+                                                    "Taxi Rating Voted",
                                               ),
                                             ],
                                           )
@@ -340,6 +362,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                   ? Colors.white54
                                                   : Colors.black54,
                                             ),
+                                            semanticsLabel:
+                                                "Not yet rated taxi score",
                                           ),
                                   ],
                                 ),
@@ -369,11 +393,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                       const Icon(
                                         Icons.phone,
                                         size: 18,
+                                        semanticLabel: "Phone Icon",
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
                                         AppLocalizations.of(context)!
                                             .translate('phone'),
+                                        semanticsLabel: "Phone",
                                       )
                                     ],
                                   ),
@@ -404,9 +430,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                       Icon(
                                         MaterialCommunityIcons.whatsapp,
                                         size: 18,
+                                        semanticLabel: "WhatsApp Icon",
                                       ),
                                       SizedBox(width: 4),
-                                      Text("WhatsApp")
+                                      Text(
+                                        "WhatsApp",
+                                        semanticsLabel: "WhatsApp",
+                                      )
                                     ],
                                   ),
                                 ),
@@ -436,6 +466,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                           ? Colors.white54
                           : Colors.black54,
                     ),
+                    semanticsLabel: "Nothing to show",
                   ),
                 ),
                 const Positioned(

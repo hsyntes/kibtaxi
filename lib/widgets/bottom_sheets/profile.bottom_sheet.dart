@@ -10,14 +10,18 @@ import 'package:kibtaxi/utils/helpers.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ProfileBottomSheet extends StatelessWidget {
-  final taxi;
+  final Map<String, dynamic> taxi;
+
   const ProfileBottomSheet({required this.taxi, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final InterstitialAds _interstitialAds = InterstitialAds();
+    final String currentLanguage = Localizations.localeOf(context).languageCode;
+
+    final InterstitialAds interstitialAds = InterstitialAds();
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
 
     List<dynamic>? taxi_photos = [];
@@ -46,7 +50,7 @@ class ProfileBottomSheet extends StatelessWidget {
       }
     }
 
-    print('taxi_reviews: ${taxi['taxi_reviews']}');
+    print("Taxi_Reviews: $taxi_reviews");
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,
@@ -211,7 +215,7 @@ class ProfileBottomSheet extends StatelessWidget {
             ),
             isThreeLine: true,
             onTap: () {
-              _interstitialAds.showAd(onAdClosed: () {
+              interstitialAds.showAd(onAdClosed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -228,7 +232,7 @@ class ProfileBottomSheet extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
-                    _interstitialAds.showAd(onAdClosed: () {
+                    interstitialAds.showAd(onAdClosed: () {
                       makePhoneCall(context, taxi['taxi_phone']);
                     });
                   },
@@ -252,7 +256,7 @@ class ProfileBottomSheet extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    _interstitialAds.showAd(onAdClosed: () async {
+                    interstitialAds.showAd(onAdClosed: () async {
                       await launchUrl(
                         Uri(
                           scheme: "https",
@@ -318,14 +322,16 @@ class ProfileBottomSheet extends StatelessWidget {
                                 ),
                               ),
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileScreen(
-                                      taxi: taxi,
+                                interstitialAds.showAd(onAdClosed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileScreen(
+                                        taxi: taxi,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                });
                               },
                             );
                           }).toList(),
@@ -387,6 +393,12 @@ class ProfileBottomSheet extends StatelessWidget {
                               "${taxi_review['reviewer_name']}",
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
+                            ),
+                            trailing: Text(
+                              timeago.format(
+                                  DateTime.parse(
+                                      taxi_review['reviewer_publishDate']),
+                                  locale: currentLanguage),
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,14 +465,16 @@ class ProfileBottomSheet extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(
-                            taxi: taxi,
+                      interstitialAds.showAd(onAdClosed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(
+                              taxi: taxi,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      });
                     },
                     style: ButtonStyle(
                       backgroundColor:

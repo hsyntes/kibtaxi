@@ -50,8 +50,6 @@ class ProfileBottomSheet extends StatelessWidget {
       }
     }
 
-    print("Taxi_Reviews: $taxi_reviews");
-
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * .75,

@@ -7,9 +7,13 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 
-  final String adUnitId = Platform.isAndroid
-      ? dotenv.env["ANDROID_CA_APP_PUB_BANNER_TEST"].toString()
-      : dotenv.env["IOS_CA_APP_PUB_BANNER_TEST"].toString();
+  // DEVELOPMENT
+  // final String adUnitId = Platform.isAndroid
+  //     ? dotenv.env["ANDROID_CA_APP_PUB_BANNER_TEST"].toString()
+  //     : dotenv.env["IOS_CA_APP_PUB_BANNER_TEST"].toString();
+
+  // PRODUCTION
+  final String adUnitId = dotenv.env['CA_APP_PUB_BANNER_PRODUCTION'].toString();
 
   @override
   void initState() {
@@ -72,9 +76,14 @@ class InterstitialAds {
   static final InterstitialAds _instance = InterstitialAds._internal();
   factory InterstitialAds() => _instance;
 
-  final String adUnitId = Platform.isAndroid
-      ? dotenv.env["ANDROID_CA_APP_PUB_INTERSTITIAL_TEST"].toString()
-      : dotenv.env["IOS_CA_APP_PUB_INTERSTITIAL_TEST"].toString();
+  // DEVELOPMENT
+  // final String adUnitId = Platform.isAndroid
+  //     ? dotenv.env["ANDROID_CA_APP_PUB_INTERSTITIAL_TEST"].toString()
+  //     : dotenv.env["IOS_CA_APP_PUB_INTERSTITIAL_TEST"].toString();
+
+  // PRODUCTION
+  final String adUnitId =
+      dotenv.env['CA_APP_PUB_INTERSTITIAL_PRODUCTION'].toString();
 
   InterstitialAds._internal() {
     _loadAd();

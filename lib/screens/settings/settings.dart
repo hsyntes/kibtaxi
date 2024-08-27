@@ -57,6 +57,7 @@ class SettingsScreen extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.translate("settings"),
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          semanticsLabel: "Settings",
         ),
       ),
       body: ListView(
@@ -64,15 +65,25 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             title: Text(
               AppLocalizations.of(context)!.translate("theme"),
+              semanticsLabel: "Theme",
             ),
-            trailing: const Icon(Icons.keyboard_arrow_right),
+            trailing: const Icon(
+              Icons.keyboard_arrow_right,
+              semanticLabel: "Arrow Right Icon",
+            ),
             onTap: () {
               Navigator.of(context).push(_createThemeSettingsRoute());
             },
           ),
           ListTile(
-            title: Text(AppLocalizations.of(context)!.translate("language")),
-            trailing: const Icon(Icons.keyboard_arrow_right),
+            title: Text(
+              AppLocalizations.of(context)!.translate("language"),
+              semanticsLabel: "Language",
+            ),
+            trailing: const Icon(
+              Icons.keyboard_arrow_right,
+              semanticLabel: "Arrow Right Icon",
+            ),
             onTap: () {
               Navigator.of(context).push(_createLanguageSettings());
             },

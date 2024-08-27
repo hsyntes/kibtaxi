@@ -11,6 +11,7 @@ import 'package:kibtaxi/widgets/bars/appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import "package:timeago/timeago.dart" as timeago;
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
@@ -46,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = Provider.of<BookmarkProvider>(context);
+    final String currentLanguage = Localizations.localeOf(context).languageCode;
 
     List<dynamic>? taxi_reviews = [];
 
@@ -69,6 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
+            semanticsLabel: "Taxi Name",
           ),
         ),
         body: CustomScrollView(
@@ -114,11 +117,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
+                      semanticsLabel: "Taxi Name",
                     ),
                     trailing: IconButton(
-                      icon: Icon(bookmarkProvider.isBookmarked(widget.taxi)
-                          ? Icons.bookmark
-                          : Icons.bookmark_outline),
+                      icon: Icon(
+                        bookmarkProvider.isBookmarked(widget.taxi)
+                            ? Icons.bookmark
+                            : Icons.bookmark_outline,
+                        semanticLabel: "Bookmark Icon",
+                      ),
                       color: bookmarkProvider.isBookmarked(widget.taxi)
                           ? Theme.of(context).brightness == Brightness.dark
                               ? Colors.white
@@ -181,6 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       Brightness.dark
                                   ? Colors.white54
                                   : Colors.black54,
+                              semanticLabel: "Location Icon",
                             ),
                             const SizedBox(width: 1),
                             Flexible(
@@ -195,6 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
+                                semanticsLabel: "Taxi Address",
                               ),
                             )
                           ],
@@ -212,6 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               .colorScheme
                                               .primary,
                                         ),
+                                        semanticsLabel: "Taxi Rating Score",
                                       ),
                                       const SizedBox(width: 3),
                                       RatingBar.builder(
@@ -228,6 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .primary,
+                                          semanticLabel: "Star Icon",
                                         ),
                                         unratedColor:
                                             Theme.of(context).brightness ==
@@ -245,6 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ? Colors.white24
                                               : Colors.black26,
                                         ),
+                                        semanticsLabel: "Taxi Rating Voted",
                                       ),
                                     ],
                                   )
@@ -257,6 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ? Colors.white54
                                           : Colors.black54,
                                     ),
+                                    semanticsLabel: "Not yet taxi rating score",
                                   ),
                           ],
                         ),
@@ -290,11 +303,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const Icon(
                                 Icons.phone,
                                 size: 18,
+                                semanticLabel: "Phone Icon",
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 AppLocalizations.of(context)!
                                     .translate('phone'),
+                                semanticsLabel: "Phone",
                               )
                             ],
                           ),
@@ -324,9 +339,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icon(
                                 MaterialCommunityIcons.whatsapp,
                                 size: 18,
+                                semanticLabel: "WhatsApp Icon",
                               ),
                               SizedBox(width: 4),
-                              Text("WhatsApp")
+                              Text(
+                                "WhatsApp",
+                                semanticsLabel: "WhatsApp",
+                              )
                             ],
                           ),
                         ),
@@ -344,12 +363,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Tab(
                         icon: Icon(
                       Icons.photo,
-                      semanticLabel: "Kibtaxi Taxi Photos",
+                      semanticLabel: "Taxi Photos",
                     )),
                     Tab(
                         icon: Icon(
                       Icons.comment,
-                      semanticLabel: "Kibtaxi Taxi Comments",
+                      semanticLabel: "Taxi Comments",
                     )),
                   ],
                 ),
@@ -359,7 +378,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: TabBarView(
                 children: [
                   CustomScrollView(
-                    // physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     slivers: [
                       SliverPadding(
@@ -401,6 +419,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   widget.taxi['taxi_photos']
                                                       [index],
                                                   fit: BoxFit.contain,
+                                                  semanticLabel: "Taxi Photos",
                                                 ),
                                               ),
                                             ),
@@ -414,6 +433,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     child: Image.network(
                                       widget.taxi['taxi_photos'][index],
                                       fit: BoxFit.cover,
+                                      semanticLabel: "Taxi Photos",
                                       loadingBuilder:
                                           (context, child, progress) {
                                         if (progress == null) {
@@ -438,7 +458,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   CustomScrollView(
-                    // physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     slivers: [
                       SliverPadding(
@@ -495,6 +514,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             "${taxi_review['reviewer_name']}",
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
+                                            semanticsLabel: "Reviewer Name",
+                                          ),
+                                          trailing: Text(
+                                            timeago.format(
+                                                DateTime.parse(taxi_review[
+                                                    'reviewer_publishDate']),
+                                                locale: currentLanguage),
                                           ),
                                           subtitle: Column(
                                             crossAxisAlignment:
@@ -512,6 +538,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           .colorScheme
                                                           .primary,
                                                     ),
+                                                    semanticsLabel:
+                                                        "Reviewer Rating",
                                                   ),
                                                   const SizedBox(width: 3),
                                                   RatingBar.builder(
@@ -529,6 +557,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .primary,
+                                                      semanticLabel:
+                                                          "Star Icon",
                                                     ),
                                                     unratedColor: Theme.of(
                                                                     context)
@@ -545,7 +575,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       ?['text'] !=
                                                   null)
                                                 Text(
-                                                    "${taxi_review['reviewer_review']['text']}"),
+                                                  "${taxi_review['reviewer_review']['text']}",
+                                                  semanticsLabel:
+                                                      "Reviewer's Comment/Review",
+                                                ),
                                             ],
                                           ),
                                           isThreeLine: true,
@@ -567,6 +600,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ? Colors.white54
                                           : Colors.black54,
                                     ),
+                                    semanticsLabel: "Not yet taxi rating score",
                                   ),
                                 ),
                               ),
@@ -593,6 +627,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'assets/icons/brands/google_maps.png',
             width: 24,
             height: 24,
+            semanticLabel: "Google Maps Icon",
           ),
         ),
         bottomNavigationBar: const BannerAdWidget(),

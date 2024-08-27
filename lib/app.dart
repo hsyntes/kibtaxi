@@ -212,6 +212,7 @@ class _MyAppState extends State<MyApp>
                           Icons.location_on,
                           color: Theme.of(context).colorScheme.primary,
                           size: 42,
+                          semanticLabel: "Location Icon",
                         ),
                         const SizedBox(height: 8),
                         FadeTransition(
@@ -223,6 +224,7 @@ class _MyAppState extends State<MyApp>
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
+                            semanticsLabel: "Finding User's Location",
                           ),
                         ),
                       ],
@@ -298,9 +300,9 @@ class _MyAppState extends State<MyApp>
                               });
                             },
                             child: Text(
-                              AppLocalizations.of(context)!
-                                  .translate("enable_location_services"),
-                            ),
+                                AppLocalizations.of(context)!
+                                    .translate("enable_location_services"),
+                                semanticsLabel: "Enable Location Services"),
                           ),
                         ],
                       ),
@@ -313,6 +315,7 @@ class _MyAppState extends State<MyApp>
                             ? "assets/icons/splash.light.png"
                             : "assets/icons/splash.png",
                         fit: BoxFit.contain,
+                        semanticLabel: "Splash Icon",
                       ),
                     )
                   ],
@@ -334,6 +337,7 @@ class _MyAppState extends State<MyApp>
                             Icons.location_off,
                             color: Theme.of(context).colorScheme.primary,
                             size: 42,
+                            semanticLabel: "Location Off Icon",
                           ),
                           // SizedBox(height: 8),
                           Padding(
@@ -346,6 +350,7 @@ class _MyAppState extends State<MyApp>
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
+                              semanticsLabel: "Location Permissions Denied",
                             ),
                           ),
                           // SizedBox(height: 8),
@@ -358,6 +363,7 @@ class _MyAppState extends State<MyApp>
                             child: Text(
                               AppLocalizations.of(context)!
                                   .translate("allow_location_permissions"),
+                              semanticsLabel: "Allow Location Permissions",
                             ),
                           ),
                         ],
@@ -371,6 +377,7 @@ class _MyAppState extends State<MyApp>
                             ? "assets/icons/splash.light.png"
                             : "assets/icons/app.png",
                         fit: BoxFit.contain,
+                        semanticLabel: "Splash Icon",
                       ),
                     )
                   ],
@@ -392,6 +399,7 @@ class _MyAppState extends State<MyApp>
                             Icons.location_off,
                             color: Theme.of(context).colorScheme.primary,
                             size: 42,
+                            semanticLabel: "Location Off Icon",
                           ),
                           Padding(
                             padding: const EdgeInsets.all(16),
@@ -403,6 +411,7 @@ class _MyAppState extends State<MyApp>
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
+                              semanticsLabel: "Location Permissions Denied",
                             ),
                           ),
                           ElevatedButton(
@@ -421,6 +430,8 @@ class _MyAppState extends State<MyApp>
                             child: Text(
                               AppLocalizations.of(context)!
                                   .translate("open_location_settings"),
+                              semanticsLabel: AppLocalizations.of(context)!
+                                  .translate("open_location_settings"),
                             ),
                           ),
                         ],
@@ -434,6 +445,7 @@ class _MyAppState extends State<MyApp>
                             ? "assets/icons/splash.light.png"
                             : 'assets/icons/splash.png',
                         fit: BoxFit.contain,
+                        semanticLabel: "Slash Icon",
                       ),
                     )
                   ],
@@ -446,8 +458,6 @@ class _MyAppState extends State<MyApp>
                 HomeScreen(
                   position: snapshot.data,
                 ),
-                // SearchScreen(),
-                // MapScreen(),
                 const BookmarkScreen(),
               ];
 
@@ -463,7 +473,11 @@ class _MyAppState extends State<MyApp>
               );
             }
 
-            return const Center(child: Text("Something went wrong."));
+            return const Center(
+                child: Text(
+              "Something went wrong.",
+              semanticsLabel: "Error Message: Something went wrong",
+            ));
           },
         ),
       ),

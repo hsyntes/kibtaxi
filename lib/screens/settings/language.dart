@@ -17,12 +17,16 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
         title: Text(
           AppLocalizations.of(context)!.translate("language_settings"),
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          semanticsLabel: "Language Settings",
         ),
       ),
       body: Column(
         children: [
           RadioListTile(
-            title: Text(AppLocalizations.of(context)!.translate("english")),
+            title: Text(
+              AppLocalizations.of(context)!.translate("english"),
+              semanticsLabel: "English",
+            ),
             value: 'en',
             groupValue: _currentLanguage,
             selected: _currentLanguage == 'en',
@@ -38,7 +42,10 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
             },
           ),
           RadioListTile(
-            title: Text(AppLocalizations.of(context)!.translate("turkish")),
+            title: Text(
+              AppLocalizations.of(context)!.translate("turkish"),
+              semanticsLabel: "Turkish",
+            ),
             value: 'tr',
             groupValue: _currentLanguage,
             selected: _currentLanguage == 'tr',

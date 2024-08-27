@@ -17,12 +17,16 @@ class ThemeSettingsScreen extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.translate("theme_settings"),
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          semanticsLabel: "Theme Settings",
         ),
       ),
       body: Column(
         children: [
           RadioListTile(
-            title: Text(AppLocalizations.of(context)!.translate("light_theme")),
+            title: Text(
+              AppLocalizations.of(context)!.translate("light_theme"),
+              semanticsLabel: "Light Theme",
+            ),
             value: ThemeMode.light,
             groupValue: Theme.of(context).brightness == Brightness.light
                 ? ThemeMode.light
@@ -37,7 +41,10 @@ class ThemeSettingsScreen extends StatelessWidget {
             },
           ),
           RadioListTile(
-            title: Text(AppLocalizations.of(context)!.translate("dark_theme")),
+            title: Text(
+              AppLocalizations.of(context)!.translate("dark_theme"),
+              semanticsLabel: "Dark Theme",
+            ),
             value: ThemeMode.dark,
             groupValue: Theme.of(context).brightness == Brightness.dark
                 ? ThemeMode.dark

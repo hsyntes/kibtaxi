@@ -43,8 +43,6 @@ class _MyAppState extends State<MyApp>
 
   Future<void> _checkApiHealth() async {
     try {
-      print("${dotenv.env['API_URL']}?API_KEY=${dotenv.env['API_KEY']}");
-
       final response = await http.get(
         Uri.parse("${dotenv.env['API_URL']}?API_KEY=${dotenv.env['API_KEY']}"),
       );
@@ -53,7 +51,6 @@ class _MyAppState extends State<MyApp>
         debugPrint("Connection to the server is successful.");
       }
     } catch (e) {
-      print("Connection to the server is failed: $e");
       throw Exception("Connection to the server is failed.");
     }
   }

@@ -14,7 +14,6 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class ProfileBottomSheet extends StatelessWidget {
   final Map<String, dynamic> taxi;
-
   const ProfileBottomSheet({required this.taxi, super.key});
 
   @override
@@ -346,13 +345,16 @@ class ProfileBottomSheet extends StatelessWidget {
 
                         return InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfileScreen(
-                                  taxi: taxi,
-                                ),
-                              ),
+                            interstitialAds.showAd(
+                              onAdClosed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfileScreen(taxi: taxi),
+                                  ),
+                                );
+                              },
                             );
                           },
                           child: ListTile(

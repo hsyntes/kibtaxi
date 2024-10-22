@@ -78,9 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<dynamic> _getTaxis() async {
     try {
-      print(
-          "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&API_KEY=${dotenv.env['API_KEY']}");
-
       final response = await http.get(Uri.parse(
           "${dotenv.env['API_URL']}/taxis?lat=${position['latitude']}&long=${position['longitude']}&API_KEY=${dotenv.env['API_KEY']}"));
 
@@ -88,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
     } catch (e) {
-      print("Failed to fetch data: $e");
       throw Exception(e);
     }
   }
